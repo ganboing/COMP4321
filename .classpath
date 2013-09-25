@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/htmlparser.jar"/>
 	<classpathentry kind="lib" path="lib/sitecapturer.jar"/>
 	<classpathentry kind="lib" path="lib/thumbelina.jar"/>
+	<classpathentry kind="lib" path="lib/jdbm-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
