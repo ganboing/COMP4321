@@ -2,15 +2,14 @@ public class TestJDBM {
 
 	public static void main(String[] args) throws Exception {
 		
-		for(String s : args)
+		for(int i = 0; i < args.length ; i++)
 		{
-			System.out.println(s);
+			System.out.printf("now args %d == %s",i , args[i]);
 		}
-		
 		if(args.length == 1)
 		{}
 
-		jdbm.RecordManager record_manager;
+		/*jdbm.RecordManager record_manager;
 		jdbm.htree.HTree hashtable;
 
 		try {
@@ -44,7 +43,7 @@ public class TestJDBM {
 		hashtable.put(((long) 0xabcd), web1);
 
 		record_manager.commit();
-		record_manager.close();
+		record_manager.close();*/
 	}
 
 }
