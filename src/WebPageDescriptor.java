@@ -22,4 +22,9 @@ public class WebPageDescriptor implements Serializable{
 		this.lastModifiedTime = lastmodtime;
 		this.URL = new String(url);
 	}
+	
+	public void print()
+	{
+		System.out.printf("id == %x \ncollectedtime == %d \nlastmodtime == %d \n url == %s \n", interalId, collectedTime, lastModifiedTime, URL);
+	}
 }
