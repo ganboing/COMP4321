@@ -51,6 +51,10 @@ public class TestJDBM {
 				throw new Exception("option not implemented");
 			}
 		}
+		else
+		{
+			throw new Exception("argc != 1");
+		}
 
 	}
 
