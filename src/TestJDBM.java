@@ -70,6 +70,9 @@ public class TestJDBM {
 			web1.pageURL = new String("new string t");
 			
 			web2.pageURL = new String("r");
+			
+			assert(web1!=web2);
+			
 			web1.print();
 			hashtable.put(((long) 0xabcd), web1);
 		}
