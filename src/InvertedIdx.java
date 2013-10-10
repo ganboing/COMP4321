@@ -1,16 +1,3 @@
-import java.io.IOException;
-import java.util.TreeMap;
-
-import jdbm.htree.HTree;
-
-class TermTree extends java.util.TreeMap<Long ,Long> implements java.io.Serializable{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-}
 
 class Post implements java.io.Serializable
 {
@@ -30,14 +17,26 @@ public class InvertedIdx{
 		try {
 			dbid = recman.getNamedObject("InvertedIdx.db");
 			htree = jdbm.htree.HTree.load(recman, dbid);
-		} catch (IOException e) {
+		} catch (java.io.IOException e) {
 			//XXX: Auto-generated catch block
 			e.printStackTrace();
 			System.exit(-2);
 		}
 	}
 	
+	public static class TermTree extends java.util.TreeMap<Long ,Long> implements java.io.Serializable{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		
+	}
 	
+	public TermTree GetTermTree(String term)
+	{
+		
+	}
 	
 	public void commit()
 	{

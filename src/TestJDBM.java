@@ -62,8 +62,14 @@ public class TestJDBM {
 		{
 			hashtable = jdbm.htree.HTree.load(record_manager, recid);
 			WebPageDescriptor web1 = (WebPageDescriptor)hashtable.get(((long) 0xabcd));
+			WebPageDescriptor web2 = (WebPageDescriptor)hashtable.get(((long) 0xabcd));
+			
 			web1.print();
-			web1.pageURL = new String("new string" + new java.util.Random().nextInt());
+			web2.print();
+			
+			web1.pageURL = new String("new string t");
+			
+			web2.pageURL = new String("t");
 			hashtable.put(((long) 0xabcd), web1);
 		}
 		else
