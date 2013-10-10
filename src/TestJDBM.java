@@ -71,7 +71,10 @@ public class TestJDBM {
 			
 			web2.pageURL = new String("r");
 			
-			assert(web1!=web2);
+			if(web1==web2)
+			{
+				System.out.printf("ptr same!!!!");
+			}
 			
 			web1.print();
 			hashtable.put(((long) 0xabcd), web1);
