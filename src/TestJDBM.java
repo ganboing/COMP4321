@@ -64,6 +64,7 @@ public class TestJDBM {
 			WebPageDescriptor web1 = (WebPageDescriptor)hashtable.get(((long) 0xabcd));
 			web1.print();
 			web1.pageURL = new String("new string" + new java.util.Random().nextInt());
+			hashtable.put(((long) 0xabcd), web1);
 		}
 		else
 		{
