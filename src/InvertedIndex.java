@@ -15,6 +15,11 @@ import java.io.Serializable;
  * and it needs the help of record manager. That is why hash table has to be provided with an argument of record manager
  * during the creation. After being created, hash table will automatically be stored in the corresponding record manager.  */
 class Posting implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	public String doc;
 	public int freq;
 

@@ -12,7 +12,18 @@ public class WebPageDescriptor implements Serializable{
 	long collectedTime;
 	long lastModifiedTime;
 	
-	String URL;
+	public String pageURL;
+	String children[]; //url
+	String parents[]; //url
+	
+	
+	static class TermDescriptor implements Serializable {
+		
+		public String term;
+		public long pos[];
+	}
+	
+	
 	
 	//XXX: only for testing
 	public WebPageDescriptor(long id, long collectedtime, long lastmodtime, String url)
@@ -20,11 +31,11 @@ public class WebPageDescriptor implements Serializable{
 		this.interalId = id;
 		this.collectedTime = collectedtime;
 		this.lastModifiedTime = lastmodtime;
-		this.URL = new String(url);
+		this.pageURL = new String(url);
 	}
 	
 	public void print()
 	{
-		System.out.printf("id == %x \ncollectedtime == %d \nlastmodtime == %d \n url == %s \n", interalId, collectedTime, lastModifiedTime, URL);
+		System.out.printf("id == %x \ncollectedtime == %d \nlastmodtime == %d \n url == %s \n", interalId, collectedTime, lastModifiedTime, pageURL);
 	}
 }
