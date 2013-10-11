@@ -78,6 +78,11 @@ public class TestJDBM {
 			
 			web1.print();
 			hashtable.put(((long) 0xabcd), web1);
+			
+			WebPageDescriptor web3 = (WebPageDescriptor)hashtable.get(((long) 0xabcd));
+			
+			assert(web1 == web3);
+			
 		}
 		else
 		{
