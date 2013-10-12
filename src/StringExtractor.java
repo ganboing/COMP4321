@@ -93,6 +93,7 @@ public class StringExtractor
             catch (ParserException e)
             {
                 e.printStackTrace ();
+                System.out.print(e.toString());
             }
         }
         else
