@@ -2,12 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="jdbm-1.0/lib/jdbm-1.0.jar"/>
-	<classpathentry kind="lib" path="htmlparser1_6/lib/filterbuilder.jar"/>
-	<classpathentry kind="lib" path="htmlparser1_6/lib/htmllexer.jar"/>
-	<classpathentry kind="lib" path="htmlparser1_6/lib/htmlparser.jar"/>
+	<classpathentry kind="lib" path="jdbm-1.0/lib/jdbm-1.0.jar" sourcepath="jdbm-1.0/src"/>
+	<classpathentry kind="lib" path="htmlparser1_6/lib/filterbuilder.jar" sourcepath="htmlparser1_6/src.zip"/>
+	<classpathentry kind="lib" path="htmlparser1_6/lib/htmllexer.jar" sourcepath="htmlparser1_6/src.zip"/>
+	<classpathentry kind="lib" path="htmlparser1_6/lib/htmlparser.jar" sourcepath="htmlparser1_6/src.zip"/>
 	<classpathentry kind="lib" path="htmlparser1_6/lib/junit.jar"/>
-	<classpathentry kind="lib" path="htmlparser1_6/lib/sax2.jar"/>
-	<classpathentry kind="lib" path="htmlparser1_6/lib/thumbelina.jar"/>
+	<classpathentry kind="lib" path="htmlparser1_6/lib/sax2.jar" sourcepath="htmlparser1_6/src.zip"/>
+	<classpathentry kind="lib" path="htmlparser1_6/lib/thumbelina.jar" sourcepath="htmlparser1_6/src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
