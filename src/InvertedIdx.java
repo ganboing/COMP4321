@@ -21,8 +21,8 @@ class SyncTermObj {
 		status = _status;
 		writeCnt = _write_cnt;
 		readCnt = _read_cnt;
-		semRead = new java.util.concurrent.Semaphore(0);
-		semMut = new java.util.concurrent.Semaphore(0);
+		semRead = null;
+		semMut = null;
 	}
 
 	static public SyncTermObj createSyncTermObjR(TermTree _treePtr) {
@@ -36,29 +36,44 @@ class SyncTermObj {
 	}
 
 	public boolean CommitRead() {
-		assert (status == STATUS_READ);
+		assert(status == STATUS_READ);
+		assert(readCnt > 0);
 		readCnt--;
 		if (readCnt == 0) {
 			if (writeCnt == 0) {
+				if(semMut != null)
+				{
+					semMut.release();
+				}
 				status = STATUS_IDLE;
 			} else {
+				assert(semMut != null);
+				semMut.release();
 				status = STATUS_WRITE;
 			}
-			semMut.release();
 		}
 		return (status == STATUS_IDLE);
 	}
 
 	public boolean CommitModify() {
 		assert (status == STATUS_WRITE);
+		assert(writeCnt > 0);
 		writeCnt--;
 		if (readCnt == 0) {
 			if (writeCnt == 0) {
 				status = STATUS_IDLE;
 			}
-			semMut.release();
+			else
+			{
+				assert(semMut != null);
+			}
+			if(semMut != null)
+			{
+				semMut.release();
+			}
 		} else {
 			status = STATUS_READ;
+			assert(semRead != null);
 			semRead.release(readCnt);
 		}
 		return (status == STATUS_IDLE);
@@ -69,17 +84,30 @@ class SyncTermObj {
 		case STATUS_IDLE:
 			assert (readCnt == 0);
 			assert (writeCnt == 0);
-			assert (semMut.availablePermits() == 1);
-			semMut.acquireUninterruptibly();
 			writeCnt++;
 			status = STATUS_WRITE;
 			return null;
-		case STATUS_READ:
 		case STATUS_WRITE:
+		case STATUS_READ:
+			switch (status) {
+			case STATUS_WRITE:
+				if (semMut == null) {
+					assert (writeCnt == 1);
+					semMut = new java.util.concurrent.Semaphore(0);
+				}
+				break;
+			case STATUS_READ:
+				if (semMut == null) {
+					assert (writeCnt == 0);
+					semMut = new java.util.concurrent.Semaphore(0);
+				}
+				break;
+			}
 			writeCnt++;
 			return semMut;
 		default:
 			assert (false);
+			System.exit(-4);
 			return null;
 		}
 	}
@@ -89,19 +117,21 @@ class SyncTermObj {
 		case STATUS_IDLE:
 			assert (readCnt == 0);
 			assert (writeCnt == 0);
-			assert (semMut.availablePermits() == 1);
-			semMut.acquireUninterruptibly();
-			readCnt++;
 			status = STATUS_READ;
-			return null;
 		case STATUS_READ:
 			readCnt++;
 			return null;
 		case STATUS_WRITE:
+			if(semRead == null)
+			{
+				assert(readCnt == 0);
+				semRead = new java.util.concurrent.Semaphore(0);
+			}
 			readCnt++;
 			return semRead;
 		default:
 			assert (false);
+			System.exit(-4);
 			return null;
 		}
 	}
@@ -197,9 +227,7 @@ public class InvertedIdx {
 				SyncTermObj st = syncMap.get(pair.getKey());
 				assert (st != null);
 				if (st.CommitRead()) {
-					if (syncMap.size() > syncMap_Thres) {
 						syncMap.remove(pair.getKey());
-					}
 				}
 			}
 		}
@@ -244,7 +272,6 @@ public class InvertedIdx {
 			SyncTermObj st = syncMap.get(term);
 			assert (st != null);
 			if (st.CommitModify()) {
-				if (syncMap.size() > syncMap_Thres) {
 					syncMap.remove(term);
 					try {
 						htree.put(term, st.treePtr);
@@ -252,7 +279,7 @@ public class InvertedIdx {
 						e.printStackTrace();
 						System.exit(-2); // XXX: Should be nicer
 					}
-				}
+				
 			}
 		}
 	}

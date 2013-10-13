@@ -1,4 +1,8 @@
 #!/bin/bash
 
-export CLASSPATH=~/COMP4321/jdbm-1.0/lib/jdbm-1.0.jar:~/COMP4321/htmlparser1_6/lib/*:.
+DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+echo $DIR
+
+export CLASSPATH=$DIR/jdbm-1.0/lib/jdbm-1.0.jar:$DIR/htmlparser1_6/lib/*:.
 

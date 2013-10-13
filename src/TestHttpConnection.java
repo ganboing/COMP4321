@@ -1,6 +1,3 @@
-import java.net.URL;
-
-import org.htmlparser.beans.LinkBean;
 
 public class TestHttpConnection {
 	public static void main (String[] args)
@@ -9,17 +6,18 @@ public class TestHttpConnection {
 		assert(args.length == 1);
 		String url_requested = args[0];
 		try {
-			java.net.URLConnection connection = org.htmlparser.lexer.Page.getConnectionManager().openConnection(url_requested);
+			//java.net.URLConnection connection = org.htmlparser.lexer.Page.getConnectionManager().openConnection(url_requested);
 
-		    connection.setConnectTimeout(5000);
-		    connection.setReadTimeout(10000);
+		    //connection.setConnectTimeout(5000);
+		    //connection.setReadTimeout(10000);
 			
 		    org.htmlparser.beans.StringBean sb = new org.htmlparser.beans.StringBean();
-			sb.setConnection(connection);
+			sb.setURL(url_requested);
 			System.out.print(sb.getStrings());
-		    LinkBean lb = new LinkBean();
-
-		    URL[] URL_array = lb.getLinks();
+			
+		    org.htmlparser.beans.LinkBean lb = new org.htmlparser.beans.LinkBean();
+		    lb.setURL(url_requested);
+		    java.net.URL[] URL_array = lb.getLinks();
 		    for(int i=0; i<URL_array.length; i++){
 		    	System.out.println(URL_array[i]);
 		    }
@@ -54,6 +52,7 @@ public class TestHttpConnection {
 			System.out.print('\n');
 			System.out.printf("last modified == ");
 			System.out.print(connection.getLastModified());*/
+		    while(true);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			System.out.print("catched in main\n");
