@@ -1,9 +1,3 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-
-
 public class TestHttpConnection {
 	public static void main (String[] args)
     {
@@ -12,7 +6,12 @@ public class TestHttpConnection {
 		String url_requested = args[0];
 		try {
 			java.net.URLConnection connection = org.htmlparser.lexer.Page.getConnectionManager().openConnection(url_requested);
-			System.out.print("url == ");
+			
+			org.htmlparser.beans.StringBean sb = new org.htmlparser.beans.StringBean();
+			sb.setConnection(connection);
+			System.out.print(sb.getStrings());
+			
+			/*System.out.print("url == ");
 			System.out.print(connection.getURL());
 			System.out.print('\n');
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -22,7 +21,7 @@ public class TestHttpConnection {
 	        in.close();
 			System.out.print('\n');
 			System.out.printf("last modified == ");
-			System.out.print(connection.getLastModified());
+			System.out.print(connection.getLastModified());*/
 			/*try {
 				connection.connect();
 				System.out.print(connection.getContentType());
