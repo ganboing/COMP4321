@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 
 
 public class TestHttpConnection {
@@ -10,6 +12,13 @@ public class TestHttpConnection {
 			java.net.URLConnection connection = org.htmlparser.lexer.Page.getConnectionManager().openConnection(url_requested);
 			System.out.print("url == ");
 			System.out.print(connection.getURL());
+			try {
+				connection.connect();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.out.print(e.toString());
+			}
 			System.out.print('\n');
 			System.out.printf("last modified == ");
 			System.out.print(connection.getLastModified());
