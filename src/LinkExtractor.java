@@ -40,7 +40,7 @@ public class LinkExtractor
 	
     public static void main (String[] args) throws ParserException
     {
-        String url = "http://www.cs.ust.hk/";
+        String url = args[0];
         LinkExtractor extractor = new LinkExtractor(url);
         extractor.extractLinks();
         
