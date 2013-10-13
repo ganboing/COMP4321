@@ -12,13 +12,14 @@ public class TestHttpConnection {
 			java.net.URLConnection connection = org.htmlparser.lexer.Page.getConnectionManager().openConnection(url_requested);
 			System.out.print("url == ");
 			System.out.print(connection.getURL());
-			/*try {
+			try {
 				connection.connect();
+				System.out.print(connection.getContentType());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				System.out.print(e.toString());
-			}*/
+			}
 			try {
 				System.out.print(connection.getContent().toString());
 			} catch (IOException e) {
