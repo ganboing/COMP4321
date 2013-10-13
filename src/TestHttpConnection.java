@@ -1,3 +1,5 @@
+import org.htmlparser.beans.LinkBean;
+
 public class TestHttpConnection {
 	public static void main (String[] args)
     {
@@ -6,11 +8,13 @@ public class TestHttpConnection {
 		String url_requested = args[0];
 		try {
 			java.net.URLConnection connection = org.htmlparser.lexer.Page.getConnectionManager().openConnection(url_requested);
-			
+
+		    connection.setConnectTimeout(5000);
+		    connection.setReadTimeout(10000);
 			org.htmlparser.beans.StringBean sb = new org.htmlparser.beans.StringBean();
 			sb.setConnection(connection);
 			System.out.print(sb.getStrings());
-			
+		    LinkBean lb = new LinkBean();
 			/*System.out.print("url == ");
 			System.out.print(connection.getURL());
 			System.out.print('\n');
@@ -44,6 +48,7 @@ public class TestHttpConnection {
 			System.out.print(connection.getLastModified());*/
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			System.out.print("catched in main\n");
 			e.printStackTrace();
 			System.out.print(e.toString());
 		}
