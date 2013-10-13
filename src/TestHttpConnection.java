@@ -11,7 +11,7 @@ public class TestHttpConnection {
 			System.out.print("url == ");
 			System.out.print(connection.getURL());
 			System.out.print('\n');
-			System.out.printf("last modified == %ld \n", connection.getLastModified());
+			System.out.printf("last modified == %d \n", connection.getLastModified());
 		} catch (org.htmlparser.util.ParserException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
