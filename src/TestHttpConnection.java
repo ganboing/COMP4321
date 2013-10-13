@@ -1,3 +1,5 @@
+import java.net.URL;
+
 import org.htmlparser.beans.LinkBean;
 
 public class TestHttpConnection {
@@ -11,10 +13,16 @@ public class TestHttpConnection {
 
 		    connection.setConnectTimeout(5000);
 		    connection.setReadTimeout(10000);
-			org.htmlparser.beans.StringBean sb = new org.htmlparser.beans.StringBean();
+			
+		    org.htmlparser.beans.StringBean sb = new org.htmlparser.beans.StringBean();
 			sb.setConnection(connection);
 			System.out.print(sb.getStrings());
 		    LinkBean lb = new LinkBean();
+
+		    URL[] URL_array = lb.getLinks();
+		    for(int i=0; i<URL_array.length; i++){
+		    	System.out.println(URL_array[i]);
+		    }
 			/*System.out.print("url == ");
 			System.out.print(connection.getURL());
 			System.out.print('\n');
