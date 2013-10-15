@@ -3,7 +3,7 @@ class Post implements java.io.Serializable {
 	long termFreq;
 }
 
-class SyncTermObj {
+final class SyncTermObj {
 	public TermTree treePtr;
 	private int status;
 	private int writeCnt;
