@@ -49,7 +49,7 @@ final class HttpWorkerTask implements
 
 	@Override
 	public IntermediatePageDescriptor call() throws Exception {
-		System.out.printf("HttpWorker For %s is running\nk", url_to_fetch);
+		System.out.printf("HttpWorker For %s is running\n", url_to_fetch);
 		try {
 			org.htmlparser.beans.StringBean sb = new org.htmlparser.beans.StringBean();
 			sb.setURL(url_to_fetch);
@@ -63,7 +63,7 @@ final class HttpWorkerTask implements
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			System.out.printf("HttpWorker For %s is finished\nk", url_to_fetch);
+			System.out.printf("HttpWorker For %s is finished\n", url_to_fetch);
 		}
 	}
 }
