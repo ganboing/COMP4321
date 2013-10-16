@@ -3,6 +3,7 @@ final class JavaDontHaveGlobalVar {
 			"http://www.cse.ust.hk?lang=hk", "http://www.cse.ust.hk?lang=cn",
 			"http://www.ust.hk/", "http://www.seng.ust.hk/",
 			"http://www.cse.ust.hk/admin/recruitment/head/",
+			"http://dmd505.resnet.ust.hk",
 			"http://www.cse.ust.hk/admin/sitemap/?map=About",
 			"http://www.cse.ust.hk/admin/welcome/",
 			"http://www.cse.ust.hk/admin/about/",
