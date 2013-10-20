@@ -448,7 +448,22 @@ public class StopStem
 	
 	public String stem(String str)
 	{
-		return porter.stripAffixes(str);
+		return Porter.stripAffixes(str);
+	}
+	
+	public String process_input_word(String str)
+	{
+		String output_str = null;
+		if(!isStopWord(str))
+		{
+			output_str=Porter.stripAffixes(str);
+		}
+		return output_str;
+	}
+	
+	private void StopStem(String str) {
+		// TODO Auto-generated method stub
+		
 	}
 	public static void main(String[] arg)
 	{
