@@ -21,7 +21,7 @@ class NewString {
 
 public class Porter {
 
-  private String Clean( String str ) {
+  private static String Clean( String str ) {
      int last = str.length();
      
      Character ch = new Character( str.charAt(0) );
@@ -35,7 +35,7 @@ public class Porter {
      return temp;
   } //clean
  
-  private boolean hasSuffix( String word, String suffix, NewString stem ) {
+  private static boolean hasSuffix( String word, String suffix, NewString stem ) {
 
      String tmp = "";
 
@@ -60,7 +60,7 @@ public class Porter {
         return false;
   }
 
-  private boolean vowel( char ch, char prev ) {
+  private static boolean vowel( char ch, char prev ) {
      switch ( ch ) {
         case 'a': case 'e': case 'i': case 'o': case 'u': 
           return true;
@@ -80,7 +80,7 @@ public class Porter {
      }
   }
 
-  private int measure( String stem ) {
+  private static int measure( String stem ) {
     
     int i=0, count = 0;
     int length = stem.length();
@@ -116,7 +116,7 @@ public class Porter {
     return(count);
   }
 
-  private boolean containsVowel( String word ) {
+  private static boolean containsVowel( String word ) {
 
      for (int i=0 ; i < word.length(); i++ )
          if ( i > 0 ) {
@@ -131,7 +131,7 @@ public class Porter {
      return false;
   }
 
-  private boolean cvc( String str ) {
+  private static boolean cvc( String str ) {
      int length=str.length();
 
      if ( length < 3 )
@@ -158,7 +158,7 @@ public class Porter {
      return false;
   }
 
-  private String step1( String str ) {
+  private static String step1( String str ) {
  
      NewString stem = new NewString();
 
@@ -236,7 +236,7 @@ public class Porter {
      return str;  
   }
 
-  private String step2( String str ) {
+  private static String step2( String str ) {
 
      String[][] suffixes = { { "ational", "ate" },
                                     { "tional",  "tion" },
@@ -275,7 +275,7 @@ public class Porter {
      return str;
   }
 
-  private String step3( String str ) {
+  private static String step3( String str ) {
 
         String[][] suffixes = { { "icate", "ic" },
                                        { "ative", "" },
@@ -297,7 +297,7 @@ public class Porter {
         return str;
   }
 
-  private String step4( String str ) {
+  private static String step4( String str ) {
         
      String[] suffixes = { "al", "ance", "ence", "er", "ic", "able", "ible", "ant", "ement", "ment", "ent", "sion", "tion",
                            "ou", "ism", "ate", "iti", "ous", "ive", "ize", "ise"};
@@ -316,7 +316,7 @@ public class Porter {
      return str;
   }
 
-  private String step5( String str ) {
+  private static String step5( String str ) {
 
      if ( str.charAt(str.length()-1) == 'e' ) { 
         if ( measure(str) > 1 ) {/* measure(str)==measure(stem) if ends in vowel */
@@ -348,7 +348,7 @@ public class Porter {
      return str;
   }
 
-  private String stripPrefixes ( String str) {
+  private static String stripPrefixes ( String str) {
 
      String[] prefixes = { "kilo", "micro", "milli", "intra", "ultra", "mega", "nano", "pico", "pseudo"};
 
@@ -366,7 +366,7 @@ public class Porter {
   }
 
 
-  private String stripSuffixes( String str ) {
+  private static String stripSuffixes( String str ) {
 
      str = step1( str );
      if ( str.length() >= 1 )
@@ -382,7 +382,7 @@ public class Porter {
   }
 
 
-  public String stripAffixes( String str ) {
+  public static String stripAffixes( String str ) {
 
     str = str.toLowerCase();
     str = Clean(str);
