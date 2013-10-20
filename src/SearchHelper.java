@@ -1,5 +1,4 @@
-
-public class SearchHelper {
+public final class SearchHelper {
 
 	//public static 
 	//public static  

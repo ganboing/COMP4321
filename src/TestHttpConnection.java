@@ -29,6 +29,8 @@ final class JavaDontHaveGlobalVar {
 			"http://www.cse.ust.hk/pg/",
 			"http://www.cse.ust.hk/pg/hkust_only/", };
 	int var_cnt = urls.length;
+	
+	
 
 	public synchronized String[] GiveMeUrl(int cnt) {
 		if (var_cnt < cnt) {
