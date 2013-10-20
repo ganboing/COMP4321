@@ -1,4 +1,3 @@
-
 public class IntermediatePageDescriptor {
 		
 	String url_fetched;
@@ -10,12 +9,16 @@ public class IntermediatePageDescriptor {
 		KeyWordMap keyword_map = new KeyWordMap();
 		java.util.Scanner scanner = new java.util.Scanner(_content);
 		
-		while(true)
-		{
-			String word = scanner.next();
-			
-			break;
-		}
+		try {
+			while (true) {
+				String word = scanner.next();
+				keyword_map.addWord(word);
+			}
+		} catch (Exception e) {
+			assert(e instanceof java.util.NoSuchElementException);
+		}b
+		
+		scanner.close();
 		
 		url_fetched = _url;
 		content = _content;
