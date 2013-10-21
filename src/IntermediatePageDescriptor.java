@@ -1,12 +1,12 @@
 public class IntermediatePageDescriptor {
 
-	String url_fetched;
-	String content;
-	java.net.URL[] links;
+	public String url_fetched;
+	public KeyWordMap keyword_map;
+	public java.net.URL[] links;
 
-	public IntermediatePageDescriptor(String _url, String _content,
+	public IntermediatePageDescriptor(String _url, String title, String _content,
 			java.net.URL[] _links) {
-		KeyWordMap keyword_map = new KeyWordMap();
+		keyword_map = new KeyWordMap();
 		java.util.Scanner scanner = new java.util.Scanner(_content);
 
 		try {
@@ -19,9 +19,18 @@ public class IntermediatePageDescriptor {
 		}
 
 		scanner.close();
+		try {
+			synchronized (Class.forName("IntermediatePageDescriptor")) {
+				System.out.printf("Imm Page: %s\n", title);
+				keyword_map.print();
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 
 		url_fetched = _url;
-		content = _content;
 		links = _links;
 	}
 }

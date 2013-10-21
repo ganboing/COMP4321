@@ -18,6 +18,16 @@ public class KeyWordMap extends java.util.HashMap<String, Integer>{
 		}
 	}
 	
+	public void print()
+	{
+		System.out.print("{ ");
+		for(java.util.Map.Entry<String, Integer> i : this.entrySet())
+		{
+			System.out.printf("(%s, %d), ", i.getKey(), i.getValue());
+		}
+		System.out.print(" }\n");
+	}
+	
 	/**
 	 * @param args
 	 */

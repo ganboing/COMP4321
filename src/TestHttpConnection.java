@@ -54,13 +54,15 @@ final class HttpWorkerTask implements
 	public IntermediatePageDescriptor call() throws Exception {
 		System.out.printf("HttpWorker For %s is running\n", url_to_fetch);
 		try {
+			org.htmlparser.Parser parser = new org.htmlparser.Parser(url_to_fetch);
+			String title = new org.htmlparser.visitors.HtmlPage(parser).getTitle();
 			org.htmlparser.beans.StringBean sb = new org.htmlparser.beans.StringBean();
 			sb.setURL(url_to_fetch);
 			String words = sb.getStrings();
 			org.htmlparser.beans.LinkBean lb = new org.htmlparser.beans.LinkBean();
 			lb.setURL(url_to_fetch);
 			java.net.URL[] URL_array = lb.getLinks();
-			return new IntermediatePageDescriptor(url_to_fetch, words,
+			return new IntermediatePageDescriptor(url_to_fetch,title,  words,
 					URL_array);
 
 		} catch (Exception e) {
@@ -112,6 +114,7 @@ public class TestHttpConnection {
 			while(true)
 			{
 				Thread.sleep(50);
+				
 			}
 			// java.net.URLConnection connection =
 			// org.htmlparser.lexer.Page.getConnectionManager().openConnection(url_requested);
