@@ -12,6 +12,7 @@ public class IntermediatePageDescriptor {
 		try {
 			while (true) {
 				String word = scanner.next();
+				if( (word = StopStem.process_input_word(word)) != null)
 				keyword_map.addWord(word);
 			}
 		} catch (Exception e) {

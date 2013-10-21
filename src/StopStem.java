@@ -1,4 +1,4 @@
-public class StopStem
+public final class StopStem
 {
 	static final String[] stop_words_arr ={
 		"a",
@@ -434,24 +434,17 @@ public class StopStem
 	
 	static final java.util.Set<String> stop_words= new java.util.HashSet<String>(java.util.Arrays.asList(stop_words_arr));
 
-	private Porter porter;
-
-	public boolean isStopWord(String str)
+	public static boolean isStopWord(String str)
 	{
 		return stop_words.contains(str);	
 	}
-	public StopStem(String str)
-	{
-		super();
-		porter = new Porter();
-	}
 	
-	public String stem(String str)
+	public static String stem(String str)
 	{
 		return Porter.stripAffixes(str);
 	}
 	
-	public String process_input_word(String str)
+	public static String process_input_word(String str)
 	{
 		String output_str = null;
 		if(!isStopWord(str))
@@ -461,11 +454,8 @@ public class StopStem
 		return output_str;
 	}
 	
-	private void StopStem(String str) {
-		// TODO Auto-generated method stub
-		
-	}
-	public static void main(String[] arg)
+	
+	/*public static void main(String[] arg)
 	{
 		StopStem stopStem = new StopStem("stopwords.txt");
 		String input="";
@@ -489,5 +479,5 @@ public class StopStem
 		{
 			System.err.println(ioe.toString());
 		}
-	}
+	}*/
 }
