@@ -1,10 +1,5 @@
-class Post implements java.io.Serializable {
-	long docId;
-	long termFreq;
-}
-
 final class SyncTermObj {
-	public TermTree treePtr;
+	public Object objptr;
 	private int status;
 	private int writeCnt;
 	private int readCnt;
@@ -15,9 +10,9 @@ final class SyncTermObj {
 	private static final int STATUS_WRITE = 1;
 	private static final int STATUS_IDLE = 0;
 
-	private SyncTermObj(TermTree _treePtr, int _status, int _write_cnt,
+	private SyncTermObj(Object _objptr, int _status, int _write_cnt,
 			int _read_cnt) {
-		treePtr = _treePtr;
+		objptr = _objptr;
 		status = _status;
 		writeCnt = _write_cnt;
 		readCnt = _read_cnt;
@@ -25,14 +20,12 @@ final class SyncTermObj {
 		semMut = null;
 	}
 
-	static public SyncTermObj createSyncTermObjR(TermTree _treePtr) {
-		SyncTermObj ret = new SyncTermObj(_treePtr, STATUS_READ, 0, 1);
-		return ret;
+	static public SyncTermObj createSyncTermObjR(Object _objptr) {
+		return new SyncTermObj(_objptr, STATUS_READ, 0, 1);
 	}
 
-	static public SyncTermObj createSyncTermObjRW(TermTree _treePtr) {
-		SyncTermObj ret = new SyncTermObj(_treePtr, STATUS_WRITE, 1, 0);
-		return ret;
+	static public SyncTermObj createSyncTermObjRW(Object _objptr) {
+		return new SyncTermObj(_objptr, STATUS_WRITE, 1, 0);
 	}
 
 	public boolean CommitRead() {
@@ -174,7 +167,7 @@ public class InvertedIdx {
 	public InvertedIdx(jdbm.RecordManager recman) {
 		long dbid;
 		try {
-			dbid = recman.getNamedObject("InvertedIdx.db");
+			dbid = recman.getNamedObject("InvertedIdx");
 			htree = jdbm.htree.HTree.load(recman, dbid);
 		} catch (java.io.IOException e) {
 			e.printStackTrace();
@@ -206,7 +199,7 @@ public class InvertedIdx {
 						syncMap.put(term, st);
 					}
 				} else {
-					ret = st.treePtr;
+					ret = (TermTree)st.objptr;
 					assert(ret != null);
 					semR = st.TryRead();
 				}
@@ -253,7 +246,7 @@ public class InvertedIdx {
 				st = SyncTermObj.createSyncTermObjRW(ret);
 				syncMap.put(term, st);
 			} else {
-				ret = st.treePtr;
+				ret = (TermTree)st.objptr;
 				assert(ret != null);
 				semW = st.TryModify();
 			}
@@ -274,7 +267,7 @@ public class InvertedIdx {
 			if (st.CommitModify()) {
 					syncMap.remove(term);
 					try {
-						htree.put(term, st.treePtr);
+						htree.put(term, st.objptr);
 					} catch (java.io.IOException e) {
 						e.printStackTrace();
 						System.exit(-2); // XXX: Should be nicer

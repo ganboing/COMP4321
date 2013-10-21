@@ -41,9 +41,18 @@ final class JavaDontHaveGlobalVar {
 	}
 }
 
+
+
 final class HttpWorkerTask implements
 		java.util.concurrent.Callable<IntermediatePageDescriptor> {
 
+	static volatile boolean should_continue = true;
+	
+	public static void stop_fetching()
+	{
+		should_continue = false;
+	}
+	
 	String url_to_fetch;
 
 	public HttpWorkerTask(String _url_to_fetch) {
@@ -54,11 +63,23 @@ final class HttpWorkerTask implements
 	public IntermediatePageDescriptor call() throws Exception {
 		System.out.printf("HttpWorker For %s is running\n", url_to_fetch);
 		try {
+			if(!should_continue)
+			{
+				throw new Exception("discontinued\n");
+			}
 			org.htmlparser.Parser parser = new org.htmlparser.Parser(url_to_fetch);
 			String title = new org.htmlparser.visitors.HtmlPage(parser).getTitle();
+			if(!should_continue)
+			{
+				throw new Exception("discontinued\n");
+			}
 			org.htmlparser.beans.StringBean sb = new org.htmlparser.beans.StringBean();
 			sb.setURL(url_to_fetch);
 			String words = sb.getStrings();
+			if(!should_continue)
+			{
+				throw new Exception("discontinued\n");
+			}
 			org.htmlparser.beans.LinkBean lb = new org.htmlparser.beans.LinkBean();
 			lb.setURL(url_to_fetch);
 			java.net.URL[] URL_array = lb.getLinks();
