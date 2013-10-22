@@ -26,7 +26,9 @@ public class Base<A>
 	private RecordManager page;
 	private RecordManager word;
 	private RecordManager pageId;
+	private RecordManager Hword;
 	private HTree hashtable;
+	private HTree hashword;
 	private HTree pageinfo;
 	private HTree wordlist;
 	private HTree pageid;
@@ -84,7 +86,7 @@ public class Base<A>
 		    word.setNamedObject( "w", wordlist.getRecid() );
 	    }
 	    
-	    recid = page.getNamedObject(objectname);
+	    recid = pageId.getNamedObject(objectname);
 		
 	    if (recid != 0)
 		    pageid = HTree.load(pageId, recid);
@@ -93,36 +95,60 @@ public class Base<A>
 		    pageid = HTree.createInstance(pageId);
 		    pageId.setNamedObject( "pi", pageid.getRecid() );
 	    }
+	    
+        recid = Hword.getNamedObject(objectname);
+		
+	    if (recid != 0)
+		    hashword = HTree.load(Hword, recid);
+	    else
+	    {
+		    hashword = HTree.createInstance(Hword);
+		    Hword.setNamedObject( "hw", hashword.getRecid() );
+	    }
 	}
-
 	
-
+	
 	public void finalize() throws IOException
 	{
 		recman.commit();
 		page.commit();
 		word.commit();
 		pageId.commit();
+		Hword.commit();
 		recman.close();	
 		page.close();	
 		word.close();
 		pageId.close();
+		Hword.close();
 	} 
 
-	public void addEntry(String url) throws IOException
+	public void addEntry_url(String url) throws IOException
 	{	
 		String id = (String) pageid.get(url);
 		
 		if(id == null)
-			id = Integer.toString(Max_WId++);	
+			id = Integer.toString(Max_UId++);	
 
 		hashtable.put(id, url);	
 		pageid.put(url, id);
 	}
 	
-	public void addEntry(String id, String p_title, String date, String size, Set<String> word, Set<String> child) throws IOException
+	public void addEntry_word(String word) throws IOException
+	{	
+		String id = (String) wordlist.get(word);
+		
+		if(id == null)
+			id = Integer.toString(Max_WId++);	
+
+		hashword.put(id, word);	
+		wordlist.put(word, id);
+	}
+	
+	public void addEntry_pageinfo(String id, String p_title, String date, String size, Set<String> word, Set<String> child) throws IOException
 	{
-		String new_entry = p_title+"\n"+date+size+"\n";
+		String url = (String) hashtable.get(id);
+		
+		String new_entry = p_title+"\n"+url+"\n"+date+size+"\n";
 		
 		for(Iterator<String> it = word.iterator(); it.hasNext();)
 			new_entry = new_entry + it.next() + "\n";
@@ -140,36 +166,38 @@ public class Base<A>
 		for(Iterator<String> it = child.iterator(); it.hasNext();)
 		{
 			String u = it.next();
-			if(!((String) pageinfo.get(id)).contains(u))
+			if(!((String) hashtable.get(id)).contains(u))
 			URLs.add(u);
 		}
 		
 	}
 	
-	public void addWord(String word, String id) throws IOException
-	{
-		if (wordlist.get(word)!=null && ((String) wordlist.get(word)).contains(id)) 
-		{
-			return;
-		}
-
-		wordlist.put(word, id);	
-	}
-	
-	public void delEntry(String word) throws IOException
+	public void delEntry_url(String url) throws IOException
 	{
 		// Delete the word and its list from the hashtable
-		hashtable.remove(word);
-	
+		String id = (String)pageid.get(url);
+		hashtable.remove(id);
+		pageid.remove(url);	
+		pageinfo.remove(id);
 	} 
+	
+	public void delEntry_word(String word) throws IOException
+	{
+		// Delete the word and its list from the hashtable
+		String id = (String)wordlist.get(word);
+		hashword.remove(id);
+		wordlist.remove(word);	
+	} 
+	
 	public void printAll() throws IOException
 	{
 		// Print all the data in the hashtable
-		FastIterator iter = hashtable.keys();
-		String key;
-		while((key=(String)iter.next())!=null)
+		FastIterator iter = pageinfo.keys();
+        String key;
+		
+        while((key=(String)iter.next())!=null)
 		{
-			System.out.println(key + " = " + hashtable.get(key));
+			System.out.println(pageinfo.get(key));
 		}
 	
 	}	
