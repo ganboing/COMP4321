@@ -25,11 +25,16 @@ public class Base<A>
 	private RecordManager recman;
 	private RecordManager page;
 	private RecordManager word;
+	private RecordManager pageId;
 	private HTree hashtable;
 	private HTree pageinfo;
 	private HTree wordlist;
+	private HTree pageid;
 	
 	private Set<String> URLs = new HashSet<String>();
+    private int Max_WId;
+    private int Max_UId;
+
 
 	Base(String recordmanager, String objectname) throws IOException
 	{
@@ -37,13 +42,26 @@ public class Base<A>
 		page = RecordManagerFactory.createRecordManager(recordmanager);
 		word = RecordManagerFactory.createRecordManager(recordmanager);
 		long recid = recman.getNamedObject(objectname);
-			
+		
+		long max_wid_handle = recman.getNamedObject("max_wid");
+		
+		if (max_wid_handle != 0)
+		    Max_WId = ((Integer)recman.fetch(max_wid_handle)).intValue();
+		else
+			recman.setNamedObject("wid", 1);
+		
+		long max_uid_handle = recman.getNamedObject("max_uid");
+		if (max_uid_handle != 0)
+		    Max_UId = ((Integer)recman.fetch(max_uid_handle)).intValue();
+		else
+			recman.setNamedObject("uid", 1);
+		
 		if (recid != 0)
 			hashtable = HTree.load(recman, recid);
 		else
 		{
 			hashtable = HTree.createInstance(recman);
-			recman.setNamedObject( "ht1", hashtable.getRecid() );
+			recman.setNamedObject( "ht", hashtable.getRecid() );
 		}
 		
 		recid = page.getNamedObject(objectname);
@@ -53,7 +71,7 @@ public class Base<A>
 		else
 		{
 			pageinfo = HTree.createInstance(page);
-			page.setNamedObject( "ht1", pageinfo.getRecid() );
+			page.setNamedObject( "p", pageinfo.getRecid() );
 		}
 		
 		recid = word.getNamedObject(objectname);
@@ -63,7 +81,17 @@ public class Base<A>
 	    else
 	    {
 		    wordlist = HTree.createInstance(word);
-		    word.setNamedObject( "ht1", wordlist.getRecid() );
+		    word.setNamedObject( "w", wordlist.getRecid() );
+	    }
+	    
+	    recid = page.getNamedObject(objectname);
+		
+	    if (recid != 0)
+		    pageid = HTree.load(pageId, recid);
+	    else
+	    {
+		    pageid = HTree.createInstance(pageId);
+		    pageId.setNamedObject( "pi", pageid.getRecid() );
 	    }
 	}
 
@@ -74,19 +102,22 @@ public class Base<A>
 		recman.commit();
 		page.commit();
 		word.commit();
+		pageId.commit();
 		recman.close();	
 		page.close();	
-		word.close();	
+		word.close();
+		pageId.close();
 	} 
 
-	public void addEntry(String id, String url) throws IOException
-	{
-		if (hashtable.get(id)!=null && ((String) hashtable.get(id)).contains(url)) 
-		{
-			return;
-		}
+	public void addEntry(String url) throws IOException
+	{	
+		String id = (String) pageid.get(url);
+		
+		if(id == null)
+			id = Integer.toString(Max_WId++);	
 
 		hashtable.put(id, url);	
+		pageid.put(url, id);
 	}
 	
 	public void addEntry(String id, String p_title, String date, String size, Set<String> word, Set<String> child) throws IOException
@@ -107,7 +138,11 @@ public class Base<A>
 		pageinfo.put(id, new_entry);
 		
 		for(Iterator<String> it = child.iterator(); it.hasNext();)
-		    URLs.add(it.next());
+		{
+			String u = it.next();
+			if(!((String) pageinfo.get(id)).contains(u))
+			URLs.add(u);
+		}
 		
 	}
 	
