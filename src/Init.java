@@ -1,10 +1,3 @@
-import java.io.IOException;
-
-import org.htmlparser.filters.TagNameFilter;
-
-import jdbm.RecordManagerFactory;
-
-
 public class Init {
 
 	public static boolean DEBUG;
@@ -25,7 +18,7 @@ public class Init {
 				System.out.println("debugging!!!");
 			}
 		}
-		recman = RecordManagerFactory.createRecordManager(args[0]);
+		recman = jdbm.RecordManagerFactory.createRecordManager(args[0]);
 		java.net.URL url_to_start = new java.net.URL(args[1]);
 		int page_num_to_fetch = Integer.parseInt(args[2]);
 		PageDB.Init(recman);
@@ -62,7 +55,7 @@ public class Init {
 					org.htmlparser.Parser parser = new org.htmlparser.Parser(url_to_fetch.toString());
 					String title;
 					try{
-						title = parser.extractAllNodesThatMatch(new TagNameFilter("title")).elementAt(0).toPlainTextString();
+						title = parser.extractAllNodesThatMatch(new org.htmlparser.filters.TagNameFilter("title")).elementAt(0).toPlainTextString();
 					}
 					catch (Exception e){
 						title = null;

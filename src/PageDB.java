@@ -1,5 +1,3 @@
-import java.io.IOException;
-
 public final class PageDB {
 
 	private static jdbm.htree.HTree pageID_info;
@@ -173,7 +171,7 @@ public final class PageDB {
 			if (pageURL_ID.get(url) == null) {
 				URL_tobesolved.add(url);
 			}
-		} catch (IOException e) {
+		} catch (java.io.IOException e) {
 			System.exit(-2);
 			e.printStackTrace();
 		}
