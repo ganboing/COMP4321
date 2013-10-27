@@ -516,5 +516,50 @@ public class RandomAccessSet<E> implements java.io.Serializable,
 			level++;
 		return level;
 	}
+	
+	public int getLPos(E value)
+	{
+		
+	}
+	
+	public int getGPos(E value)
+	{
+		
+	}
+	
+	public int getLEPos(E value)
+	{
+		
+	}
+	
+	public int getGEPos(E value)
+	{
+		
+	}
+	
+	public E getAtPos(int t)
+	{
+		Node<E> p = root;
+		while(p != null)
+		{
+			if(subTreeSize(p.left) > t)
+			{
+				p = p.left;
+			}
+			else
+			{
+				t -= (subTreeSize(p.left) + 1);
+				if(t == -1)
+				{
+					return p.value;
+				}
+				else
+				{
+					p = p.right;
+				}
+			}
+		}
+		return null;
+	}
 
 }
