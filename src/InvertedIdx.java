@@ -1,4 +1,4 @@
-final class SyncTermObj {
+/*final class SyncTermObj {
 	public Object objptr;
 	private int status;
 	private int writeCnt;
@@ -131,9 +131,7 @@ final class SyncTermObj {
 }
 
 class PtrCache<K, V> extends java.util.LinkedHashMap<K, V> {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 4099067150469224472L;
 
 	final int size;
@@ -276,4 +274,35 @@ public class InvertedIdx {
 			}
 		}
 	}
+}
+ */
+
+public class InvertedIdx {
+	static java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Long, Long>, KeyWordDescriptor> Inverted_Map = null;
+	
+	public static void Init(java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Long, Long>, KeyWordDescriptor> m)
+	{
+		Inverted_Map = m;
+	}
+	
+	public static void update(Long page_id, java.util.Set<Long> key_word_to_delete, java.util.Map<Long, KeyWordDescriptor> key_word_to_add)
+	{
+		assert(page_id != null);
+		if(key_word_to_delete != null)
+		{
+			for(Long key_word_id : key_word_to_delete)
+			{
+				Inverted_Map.remove(org.mapdb.Fun.t2(key_word_id, page_id));
+			}
+		}
+		if(key_word_to_add != null)
+		{
+			for(java.util.Map.Entry<Long, KeyWordDescriptor> key_word_desc_to_add : key_word_to_add.entrySet())
+			{
+				Inverted_Map.put(org.mapdb.Fun.t2(key_word_desc_to_add.getKey(), page_id), key_word_desc_to_add.getValue());
+			}
+		}
+	}
+	
+	//public static java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Long, Long>, KeyWordDescriptor> get
 }

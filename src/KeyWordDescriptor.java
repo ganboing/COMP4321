@@ -1,9 +1,8 @@
-public final class KeyWordDescriptor implements Comparable<KeyWordDescriptor>,
-		java.util.Comparator<KeyWordDescriptor> {
-	long pageId;
-	int[] pos = null;
+public final class KeyWordDescriptor {
+	//long pageId;
+	public java.util.List<Integer> pos = null;
 
-	public int compare(KeyWordDescriptor o1, KeyWordDescriptor o2) {
+	/*public int compare(KeyWordDescriptor o1, KeyWordDescriptor o2) {
 		Long.compare(o1.pageId, o2.pageId);
 		return 0;
 	}
@@ -11,5 +10,5 @@ public final class KeyWordDescriptor implements Comparable<KeyWordDescriptor>,
 	public int compareTo(KeyWordDescriptor o) {
 		Long.compare(this.pageId, o.pageId);
 		return 0;
-	}
+	}*/
 }
