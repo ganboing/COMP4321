@@ -40,11 +40,24 @@ public final class WebPageDescriptor implements java.io.Serializable{
 		
 		keyword_map = new KeyWordMap();
 		// java.util.Scanner scanner = new java.util.Scanner(_content);
-		java.util.regex.Matcher matcher = pattern_alpha.matcher(_content);
-		while (matcher.find()) {
-			String word = matcher.group();
+		java.util.regex.Matcher matcher_body = pattern_alpha.matcher(_content);
+		while (matcher_body.find()) {
+			String word = matcher_body.group();
+			int pos = matcher_body.start();
 			if ((word = StopStem.process_input_word(word)) != null)
-				keyword_map.addWord(word);
+			{
+				keyword_map.addBody(word, pos);
+			}
+		}
+		java.util.regex.Matcher matcher_title = pattern_alpha.matcher(title);
+		while(matcher_title.find())
+		{
+			String word = matcher_title.group();
+			int pos = matcher_title.start();
+			if((word = StopStem.process_input_word(word)) != null)
+			{
+				keyword_map.addTitile(word, pos);
+			}
 		}
 		
 		if(Init.DEBUG)

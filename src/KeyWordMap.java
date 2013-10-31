@@ -1,38 +1,38 @@
-public class KeyWordMap extends java.util.HashMap<String, KeyWordDescriptor>{
+public class KeyWordMap extends java.util.HashMap<String, KeyWordDescriptor> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8970906244201879595L;
 
-	public void addWord(String word, int pos)
-	{
-		Integer word_cnt = this.get(word);
-		if(word_cnt != null)
-		{
-			this.put(word, Integer.valueOf(word_cnt.intValue()+1));
+	private KeyWordDescriptor getDesc(String word) {
+		KeyWordDescriptor ret = null;
+		if ((ret = this.get(word)) == null) {
+			this.put(word, (ret = new KeyWordDescriptor()));
 		}
-		else
-		{
-			this.put(word, Integer.valueOf(1));
-		}
+		return ret;
 	}
-	
-	public void print()
-	{
-		System.out.print("{ ");
-		for(java.util.Map.Entry<String, Integer> i : this.entrySet())
-		{
-			System.out.printf("(%s, %d), ", i.getKey(), i.getValue());
-		}
-		System.out.print(" }\n");
+
+	public void addBodyOccur(String word, int pos) {
+		getDesc(word).appendBodyOccur(pos);
 	}
-	
+
+	public void addTitleOccur(String word, int pos) {
+		getDesc(word).appendTitleOccur(pos);
+	}
+
+	/*
+	 * public void print() { System.out.print("{ "); for
+	 * (java.util.Map.Entry<String, Integer> i : this.entrySet()) {
+	 * System.out.printf("(%s, %d), ", i.getKey(), i.getValue()); }
+	 * System.out.print(" }\n"); }
+	 */
+
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+
 		System.out.print("not implemented");
 		// TODO Auto-generated method stub
 
