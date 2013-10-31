@@ -1,11 +1,11 @@
-public class KeyWordMap extends java.util.HashMap<String, Integer>{
+public class KeyWordMap extends java.util.HashMap<String, KeyWordDescriptor>{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8970906244201879595L;
 
-	public void addWord(String word)
+	public void addWord(String word, int pos)
 	{
 		Integer word_cnt = this.get(word);
 		if(word_cnt != null)
