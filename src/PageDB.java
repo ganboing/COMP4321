@@ -17,8 +17,10 @@ public final class PageDB {
 	private static long Page_DB_Size;
 
 	private static jdbm.RecordManager recman;
+	
+	//private static 
 
-	public static void Init(jdbm.RecordManager _recman) {
+	/*public static void Init(jdbm.RecordManager _recman) {
 
 		try {
 			recman = _recman;
@@ -191,5 +193,10 @@ public final class PageDB {
 			e.printStackTrace();
 		}
 
+	}*/
+	
+	public static void UpdateLink(Long pageID, java.util.Set<java.net.URL> links, double damp)
+	{
+		
 	}
 }
