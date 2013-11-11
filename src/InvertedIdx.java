@@ -1,5 +1,3 @@
-import org.mapdb.Fun;
-
 /*final class SyncTermObj {
  public Object objptr;
  private int status;
@@ -289,7 +287,7 @@ public class InvertedIdx {
 		return ID2Word.get(id);
 	}
 
-	public static Long FindIDByWord(String word) {
+	public static Long FindIDByWord(String word, int cnt) {
 		return Word2ID.get(word);
 	}
 
@@ -299,13 +297,13 @@ public class InvertedIdx {
 	}
 
 	public static void RemoveWord(Long docID, Long wordID) {
-		Fun.Tuple2<Long, Long> key = Fun.t2(wordID, docID);
+		org.mapdb.Fun.Tuple2<Long, Long> key = org.mapdb.Fun.t2(wordID, docID);
 		Inverted_Map.remove(key);
 	}
 
 	public static void InsertWord(Long docID, Long wordID,
 			KeyWordDescriptor desc) {
-		Fun.Tuple2<Long, Long> key = Fun.t2(wordID, docID);
+		org.mapdb.Fun.Tuple2<Long, Long> key = org.mapdb.Fun.t2(wordID, docID);
 		Inverted_Map.put(key, desc);
 	}
 

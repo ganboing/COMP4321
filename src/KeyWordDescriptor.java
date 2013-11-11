@@ -23,4 +23,18 @@ public final class KeyWordDescriptor implements java.io.Serializable{
 		}
 		title_occur.add(pos);
 	}
+	
+	public int Cnt()
+	{
+		int ret = 0;
+		if(body_occur != null)
+		{
+			ret += body_occur.size();
+		}
+		if(title_occur != null)
+		{
+			ret += title_occur.size();
+		}
+		return ret;
+	}
 }

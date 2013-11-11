@@ -3,6 +3,7 @@ public class IntermediatePageDescriptor {
 	private static java.util.regex.Pattern pattern_alpha = java.util.regex.Pattern
 			.compile("[a-zA-Z]+");
 
+	public Long PageID;
 	public java.net.URL page_url;
 	public String title;
 	public java.util.Set<java.net.URL> links;
