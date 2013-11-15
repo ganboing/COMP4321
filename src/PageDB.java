@@ -1,44 +1,56 @@
-import java.util.HashSet;
-
 public final class PageDB {
 
-	static private java.util.concurrent.ConcurrentMap<Integer, WebPageDescriptor> PageDesc;
-	static private java.util.NavigableSet<org.mapdb.Fun.Tuple2<Integer ,Integer>> PageContent;
-	static private java.util.concurrent.ConcurrentMap<Integer, Integer> PePageID2Time;
-	static private java.util.NavigableSet<org.mapdb.Fun.Tuple2<Integer, Integer>> PePageTime2ID;
+	// static private java.util.concurrent.ConcurrentMap<Integer,
+	// WebPageDescriptor> PageDesc;
+	static private java.util.NavigableSet<org.mapdb.Fun.Tuple2<Integer, Integer>> PageContent;
+	static private java.util.concurrent.ConcurrentMap<Integer, String> PageTitle;
+	static private java.util.concurrent.ConcurrentMap<Integer, Integer> PagemaxTf;
+	static private java.util.concurrent.ConcurrentMap<Integer, Long> PageLastMod;
+	static private java.util.NavigableSet<Integer> PagePending;
+	/*
+	 * static private java.util.concurrent.ConcurrentMap<Integer, Integer>
+	 * PePageID2TTL; static private
+	 * java.util.NavigableSet<org.mapdb.Fun.Tuple2<Integer, Integer>>
+	 * PePageTTL2ID;
+	 */
 	static private java.util.NavigableSet<org.mapdb.Fun.Tuple2<Integer, Integer>> PageLink;
 	static private java.util.NavigableSet<org.mapdb.Fun.Tuple2<Integer, Integer>> PageRvLink;
 	static private java.util.concurrent.ConcurrentMap<String, Integer> PageIDByURL;
 	static private java.util.concurrent.ConcurrentMap<Integer, String> PageURLByID;
 
-	private static void DeleteLinks(Integer pageid) {
-		java.util.NavigableSet<org.mapdb.Fun.Tuple2<Long, Long>> children = PageLink
-				.subSet(org.mapdb.Fun.t2(pageid, null),
-						org.mapdb.Fun.t2(pageid, org.mapdb.Fun.HI));
-		for(org.mapdb.Fun.Tuple2<Long, Long> lnk : children)
-		{
-			PageRvLink.remove(org.mapdb.Fun.t2(lnk.b, lnk.a));
-		}
-		PageLink.removeAll(children);
+	/*
+	 * private static void DeleteLinks(Integer pageid) {
+	 * java.util.NavigableSet<org.mapdb.Fun.Tuple2<Integer, Integer>> children =
+	 * PageLink .subSet(org.mapdb.Fun.t2(pageid, Integer.valueOf(0)), true,
+	 * org.mapdb.Fun.t2(pageid, Integer.valueOf(Integer.MAX_VALUE)), false); for
+	 * (org.mapdb.Fun.Tuple2<Integer, Integer> lnk : children) {
+	 * PageRvLink.remove(org.mapdb.Fun.t2(lnk.b, lnk.a)); }
+	 * PageLink.removeAll(children); }
+	 */
+
+	public static String GetOnePending() {
+		return PageURLByID.get(PagePending.first());
 	}
 
 	private static Integer CreatePage(String url) {
-		if(PageIDByURL.containsKey(url))
-		{
+		if (PageURLByID.size() != PageIDByURL.size()) {
+			System.exit(-2);
+		}
+		if (PageIDByURL.containsKey(url)) {
 			Integer ret = PageIDByURL.get(url);
-			if(ret == null)
-			{
+			if (ret == null) {
 				System.exit(-2);
 			}
 			return ret;
 		}
 		Integer assigned_id = Integer.valueOf(PageURLByID.size());
+		PagePending.add(assigned_id);
 		PageIDByURL.put(url, assigned_id);
 		PageURLByID.put(assigned_id, url);
 		return assigned_id;
 	}
 
-	private static void AddLinks(Integer pageid, java.util.Set<Integer> links) {
+	private static void CreateLinks(Integer pageid, java.util.Set<Integer> links) {
 		for (Integer child_id : links) {
 			PageLink.add(org.mapdb.Fun.t2(pageid, child_id));
 			PageRvLink.add(org.mapdb.Fun.t2(child_id, pageid));
@@ -47,16 +59,43 @@ public final class PageDB {
 
 	public static void UpdateLink(Integer pageID,
 			java.util.Set<String> links_urls, double damp) {
-		DeleteLinks(pageID);
+		// DeleteLinks(pageID);
 		java.util.Set<Integer> link_resolved = new java.util.HashSet<Integer>();
 		for (String url : links_urls) {
 			Integer newpageid = CreatePage(url);
 			link_resolved.add(newpageid);
 		}
-		AddLinks(pageID, link_resolved);
+		CreateLinks(pageID, link_resolved);
 	}
 
-	public static void UpadteDesc(Long pageID, WebPageDescriptor desc) {
+	public static void CreateContent(Integer pageID,
+			java.util.Set<Integer> words) {
+		PagePending.remove(pageID);
+		for (Integer word_id : words) {
+			PageContent.add(org.mapdb.Fun.t2(pageID, word_id));
+		}
+	}
 
+	public static void CreateMeta(Integer pageID, String title, Integer max_tf,
+			Long last_mod) {
+		PageTitle.put(pageID, title);
+		PageLastMod.put(pageID, last_mod);
+		PagemaxTf.put(pageID, max_tf);
+	}
+
+	public static String GetTitle(Integer pageID) {
+		return PageTitle.get(pageID);
+	}
+
+	public static Long GetLastMod(Integer pageID) {
+		return PageLastMod.get(pageID);
+	}
+
+	public static java.util.Set<org.mapdb.Fun.Tuple2<Integer, Integer>> GetContent(
+			Integer pageID) {
+		return PageContent.subSet(org.mapdb.Fun.t2(pageID, Integer.valueOf(0)),
+				true,
+				org.mapdb.Fun.t2(pageID, Integer.valueOf(Integer.MAX_VALUE)),
+				false);
 	}
 }

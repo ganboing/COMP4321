@@ -1,4 +1,4 @@
-public class KeyWordMap extends java.util.HashMap<String, KeyWordDescriptor> {
+public final class KeyWordMap extends java.util.HashMap<String, KeyWordDescriptor> {
 
 	/**
 	 * 

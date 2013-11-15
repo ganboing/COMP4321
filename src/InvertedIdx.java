@@ -278,55 +278,52 @@
  */
 
 public class InvertedIdx {
-	static java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Long, Long>, KeyWordDescriptor> Inverted_Map = null;
-	static java.util.concurrent.ConcurrentNavigableMap<String, Long> Word2ID = null;
-	static org.mapdb.LongConcurrentLRUMap<String> ID2Word = null;
+	static java.util.concurrent.ConcurrentNavigableMap<Integer, Integer> WordDfByID;
+	static java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Integer, Integer>, KeyWordDescriptor> WordDescByWordDocID;
+	static java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Integer, Integer>, Integer> WordTfByWordDocID;
+
+	static java.util.concurrent.ConcurrentNavigableMap<String, Integer> WordIDByStr;
+	static java.util.concurrent.ConcurrentNavigableMap<Integer, String> WordStrByID;
 	static org.mapdb.LongConcurrentLRUMap<Long> WordCnter = null;
 
-	public static String FindWordByID(long id) {
-		return ID2Word.get(id);
-	}
-
-	public static Long FindIDByWord(String word, int cnt) {
-		return Word2ID.get(word);
-	}
-
-	public static void Init(
-			java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Long, Long>, KeyWordDescriptor> m) {
-		Inverted_Map = m;
-	}
-
-	public static void RemoveWord(Long docID, Long wordID) {
-		org.mapdb.Fun.Tuple2<Long, Long> key = org.mapdb.Fun.t2(wordID, docID);
-		Inverted_Map.remove(key);
-	}
-
-	public static void InsertWord(Long docID, Long wordID,
-			KeyWordDescriptor desc) {
-		org.mapdb.Fun.Tuple2<Long, Long> key = org.mapdb.Fun.t2(wordID, docID);
-		Inverted_Map.put(key, desc);
-	}
-
-	public static void update(Long page_id,
-			java.util.Set<Long> key_word_to_delete,
-			java.util.Map<Long, KeyWordDescriptor> key_word_to_add) {
-		assert (page_id != null);
-		if (key_word_to_delete != null) {
-			for (Long key_word_id : key_word_to_delete) {
-				Inverted_Map.remove(org.mapdb.Fun.t2(key_word_id, page_id));
-			}
+	public static Integer CreateWord(String word)
+	{
+		if(WordIDByStr.size() != WordStrByID.size())
+		{
+			System.exit(-2);
 		}
+		if(WordIDByStr.containsKey(word))
+		{
+			Integer ret = WordIDByStr.get(word);
+			if(ret == null)
+			{
+				System.exit(-2);
+			}
+			return ret;
+		}
+		Integer assign_id = Integer.valueOf(WordStrByID.size());
+		WordStrByID.put(assign_id, word);
+		WordIDByStr.put(word, assign_id);
+		return assign_id;
+	}
+	
+	public static String FindWordByID(Integer id) {
+		return WordStrByID.get(id);
+	}
+
+	public static Integer FindIDByWord(String word) {
+		return WordIDByStr.get(word);
+	}
+
+	public static void InsertDoc(Integer page_id,
+			java.util.Map<String, KeyWordDescriptor> key_word_to_add) {
+		//assert (page_id != null);
 		if (key_word_to_add != null) {
-			for (java.util.Map.Entry<Long, KeyWordDescriptor> key_word_desc_to_add : key_word_to_add
+			for (java.util.Map.Entry<String, KeyWordDescriptor> keyword_desc_pair : key_word_to_add
 					.entrySet()) {
-				Inverted_Map.put(org.mapdb.Fun.t2(
-						key_word_desc_to_add.getKey(), page_id),
-						key_word_desc_to_add.getValue());
+				Integer keyword_id = CreateWord(keyword_desc_pair.getKey());
+				WordDescByWordDocID.put(org.mapdb.Fun.t2(keyword_id, page_id), keyword_desc_pair.getValue());
 			}
 		}
 	}
-
-	// public static
-	// java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Long,
-	// Long>, KeyWordDescriptor> get
 }
