@@ -2,7 +2,8 @@ public final class PageDB {
 
 	// static private java.util.concurrent.ConcurrentMap<Integer,
 	// WebPageDescriptor> PageDesc;
-	static private java.util.NavigableSet<org.mapdb.Fun.Tuple2<Integer, Integer>> PageContent;
+	static private java.util.NavigableSet<org.mapdb.Fun.Tuple3<Integer, Integer, Integer>> PageContent;
+	/* Scheme (DocID, Occur_Cnt, WordID) */
 	static private java.util.concurrent.ConcurrentMap<Integer, String> PageTitle;
 	static private java.util.concurrent.ConcurrentMap<Integer, Integer> PagemaxTf;
 	static private java.util.concurrent.ConcurrentMap<Integer, Long> PageLastMod;
@@ -69,10 +70,12 @@ public final class PageDB {
 	}
 
 	public static void CreateContent(Integer pageID,
-			java.util.Set<Integer> words) {
+			java.util.Map<Integer, Integer> words) {
 		PagePending.remove(pageID);
-		for (Integer word_id : words) {
-			PageContent.add(org.mapdb.Fun.t2(pageID, word_id));
+		for (java.util.Map.Entry<Integer, Integer> wordid_cnt_pair : words
+				.entrySet()) {
+			PageContent.add(org.mapdb.Fun.t3(pageID,
+					wordid_cnt_pair.getValue(), wordid_cnt_pair.getKey()));
 		}
 	}
 
@@ -91,11 +94,11 @@ public final class PageDB {
 		return PageLastMod.get(pageID);
 	}
 
-	public static java.util.Set<org.mapdb.Fun.Tuple2<Integer, Integer>> GetContent(
+	public static java.util.Set<org.mapdb.Fun.Tuple3<Integer, Integer, Integer>> GetContent(
 			Integer pageID) {
-		return PageContent.subSet(org.mapdb.Fun.t2(pageID, Integer.valueOf(0)),
-				true,
-				org.mapdb.Fun.t2(pageID, Integer.valueOf(Integer.MAX_VALUE)),
-				false);
+		return PageContent.subSet(org.mapdb.Fun.t3(pageID, Integer.valueOf(0),
+				Integer.valueOf(0)), true, org.mapdb.Fun.t3(pageID,
+				Integer.valueOf(Integer.MAX_VALUE),
+				Integer.valueOf(Integer.MAX_VALUE)), false);
 	}
 }

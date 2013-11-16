@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="htmlparser1_6/lib/htmllexer.jar" sourcepath="/HTMLParser"/>
 	<classpathentry kind="lib" path="htmlparser1_6/lib/htmlparser.jar" sourcepath="/HTMLParser"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/MapDB"/>
+	<classpathentry kind="lib" path="lib/guava-15.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
