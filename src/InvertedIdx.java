@@ -277,86 +277,94 @@
  }
  */
 
-abstract class TagIt<E extends Comparable<E>, V> implements
-		Comparable<TagIt<E, V>> {
-	int slot;
-	V current;
+final class WordIt<K> extends TagIt<Integer, K> {
 
-	public TagIt(int _slot) {
-		slot = _slot;
-	}
+	java.util.Map.Entry<org.mapdb.Fun.Tuple2<Integer, Integer>, K> nxt = null;
 
-	public int GetSlot() {
-		return slot;
-	}
+	java.util.Iterator<java.util.Map.Entry<org.mapdb.Fun.Tuple2<Integer, Integer>, K>> it = null;
 
-	public abstract E GetTag();
-
-	public abstract V NextAndUpdate();
-
-	public V GetCurrent() {
-		return current;
-	}
-
-	public int compareTo(TagIt<E, V> o) {
-		if (this.GetTag().compareTo(o.GetTag()) == 0) {
-			return this.GetSlot() - o.GetSlot();
-		}
-		return this.GetTag().compareTo(o.GetTag());
-	}
-}
-
-final class WordIt
-		extends
-		TagIt<Integer, org.mapdb.Fun.Tuple2<Integer, KeyWordDescriptor.KeyWordCnt>> {
-
-	java.util.Iterator<java.util.Map.Entry<org.mapdb.Fun.Tuple2<Integer, Integer>, KeyWordDescriptor.KeyWordCnt>> it;
-
-	public WordIt(int slot, Integer keyword_id) {
+	public WordIt(
+			int slot,
+			Integer keyword_id,
+			java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Integer, Integer>, K> map) {
 		super(slot);
-		it = InvertedIdx.GetTermFreq(keyword_id).entrySet().iterator();
-		if (it.hasNext()) {
-			NextAndUpdate();
-		} else {
-			current = null;
-		}
+		it = map.subMap(
+				org.mapdb.Fun.t2(keyword_id, 0),
+				true,
+				org.mapdb.Fun.t2(keyword_id, Integer.valueOf(Integer.MAX_VALUE)),
+				false).entrySet().iterator();
 	}
 
 	@Override
 	public Integer GetTag() {
-		return current.a;
+		return nxt.getKey().b;
 	}
 
 	@Override
-	public org.mapdb.Fun.Tuple2<Integer, KeyWordDescriptor.KeyWordCnt> NextAndUpdate() {
-		java.util.Map.Entry<org.mapdb.Fun.Tuple2<Integer, Integer>, KeyWordDescriptor.KeyWordCnt> nxt = it
-				.next();
-		current = org.mapdb.Fun.t2(nxt.getKey().b, nxt.getValue());
-		return current;
+	public boolean NextAndUpdate() {
+		if(it.hasNext())
+		{
+			nxt = it.next();
+			return true;
+		}
+		return false;
 	}
 
+	@Override
+	public K GetVal() {
+		return nxt.getValue();
+	}
 }
 
-final class PhaseIt
-		extends
-		TagIt<Integer, org.mapdb.Fun.Tuple2<Integer, KeyWordDescriptor.KeyWordCnt>> {
-	public PhaseIt(int slot, java.util.List<Integer> phase) {
+final class PhaseIt extends TagIt<Integer, KeyWordDescriptor.KeyWordCnt> {
 
+	private TagItPool<Integer, KeyWordDescriptor> phase_word_pool = null;
+	//private org.mapdb.Fun.Tuple2<Integer, java.util.List<KeyWordDescriptor>> nxt_worddesc_list = null;
+	private Integer pageid = null;
+	private KeyWordDescriptor.KeyWordCnt keyword_cnt = null;
+	
+	public PhaseIt(
+			int slot,
+			java.util.List<Integer> phase,
+			java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Integer, Integer>, KeyWordDescriptor> map) {
 		super(slot);
+		java.util.List<TagIt<Integer, KeyWordDescriptor>> it_list = new java.util.LinkedList<TagIt<Integer, KeyWordDescriptor>>();
+		int i = 0;
+		for (Integer word : phase) {
+			it_list.add(new WordIt<KeyWordDescriptor>(i++, word, map));
+		}
+		phase_word_pool = new TagItPool<Integer, KeyWordDescriptor>(it_list);
 	}
 
 	@Override
 	public Integer GetTag() {
-		// TODO Auto-generated method stub
-		return null;
+		return pageid;
 	}
 
 	@Override
-	public Tuple2<Integer, KeyWordCnt> NextAndUpdate() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean NextAndUpdate() {
+		while(true)
+		{
+			org.mapdb.Fun.Tuple2<Integer, java.util.List<KeyWordDescriptor>> nxt_desc_list = phase_word_pool.GetNxtWholeVect();
+			if(nxt_desc_list == null)
+			{
+				pageid = null;
+				keyword_cnt = null;
+				return false;
+			}
+			pageid = nxt_desc_list.a;
+			keyword_cnt = KeyWordDescriptor.ProcPhase(nxt_desc_list.b);
+			if(keyword_cnt != null)
+			{
+				return true;
+			}
+		}
 	}
 
+	@Override
+	public KeyWordDescriptor.KeyWordCnt GetVal() {
+		return keyword_cnt;
+	}
 }
 
 public class InvertedIdx {
@@ -423,6 +431,13 @@ public class InvertedIdx {
 						true,
 						org.mapdb.Fun.t2(keyword_id,
 								Integer.valueOf(Integer.MAX_VALUE)), false);
+	}
+
+	public static java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Integer, Integer>, KeyWordDescriptor> GetTermDesc(
+			Integer keyword_id) {
+		return WordDescByWordDocID.subMap(org.mapdb.Fun.t2(keyword_id, 0),
+				true, org.mapdb.Fun.t2(keyword_id,
+						Integer.valueOf(Integer.MAX_VALUE)), false);
 	}
 
 	// public static java.util.
