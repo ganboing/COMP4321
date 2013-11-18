@@ -1,6 +1,7 @@
 public abstract class TagIt<E extends Comparable<E>, V> implements
 		Comparable<TagIt<E, V>> {
 	int slot;
+	//int it_cnt = 0;
 
 	public TagIt(int _slot) {
 		slot = _slot;
@@ -9,6 +10,10 @@ public abstract class TagIt<E extends Comparable<E>, V> implements
 	public int GetSlot() {
 		return slot;
 	}
+
+	/*public int GetItCnt() {
+		return it_cnt;
+	}*/
 
 	public abstract E GetTag();
 

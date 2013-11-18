@@ -285,14 +285,9 @@ final class WordIt<K> extends TagIt<Integer, K> {
 
 	public WordIt(
 			int slot,
-			Integer keyword_id,
 			java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Integer, Integer>, K> map) {
 		super(slot);
-		it = map.subMap(
-				org.mapdb.Fun.t2(keyword_id, 0),
-				true,
-				org.mapdb.Fun.t2(keyword_id, Integer.valueOf(Integer.MAX_VALUE)),
-				false).entrySet().iterator();
+		it = map.entrySet().iterator();
 	}
 
 	@Override
@@ -302,9 +297,9 @@ final class WordIt<K> extends TagIt<Integer, K> {
 
 	@Override
 	public boolean NextAndUpdate() {
-		if(it.hasNext())
-		{
+		if (it.hasNext()) {
 			nxt = it.next();
+			// it_cnt++;
 			return true;
 		}
 		return false;
@@ -319,10 +314,11 @@ final class WordIt<K> extends TagIt<Integer, K> {
 final class PhaseIt extends TagIt<Integer, KeyWordDescriptor.KeyWordCnt> {
 
 	private TagItPool<Integer, KeyWordDescriptor> phase_word_pool = null;
-	//private org.mapdb.Fun.Tuple2<Integer, java.util.List<KeyWordDescriptor>> nxt_worddesc_list = null;
+	// private org.mapdb.Fun.Tuple2<Integer, java.util.List<KeyWordDescriptor>>
+	// nxt_worddesc_list = null;
 	private Integer pageid = null;
 	private KeyWordDescriptor.KeyWordCnt keyword_cnt = null;
-	
+
 	public PhaseIt(
 			int slot,
 			java.util.List<Integer> phase,
@@ -331,9 +327,19 @@ final class PhaseIt extends TagIt<Integer, KeyWordDescriptor.KeyWordCnt> {
 		java.util.List<TagIt<Integer, KeyWordDescriptor>> it_list = new java.util.LinkedList<TagIt<Integer, KeyWordDescriptor>>();
 		int i = 0;
 		for (Integer word : phase) {
-			it_list.add(new WordIt<KeyWordDescriptor>(i++, word, map));
+			it_list.add(new WordIt<KeyWordDescriptor>(i++, InvertedIdx
+					.GetTermDesc(word)));
 		}
 		phase_word_pool = new TagItPool<Integer, KeyWordDescriptor>(it_list);
+	}
+
+	public PhaseIt(int slot) {
+		super(slot);
+		phase_word_pool = new TagItPool<Integer, KeyWordDescriptor>();
+	}
+
+	public void PutWordIt(WordIt<KeyWordDescriptor> wordit) {
+		phase_word_pool.AddIt(wordit);
 	}
 
 	@Override
@@ -343,19 +349,18 @@ final class PhaseIt extends TagIt<Integer, KeyWordDescriptor.KeyWordCnt> {
 
 	@Override
 	public boolean NextAndUpdate() {
-		while(true)
-		{
-			org.mapdb.Fun.Tuple2<Integer, java.util.List<KeyWordDescriptor>> nxt_desc_list = phase_word_pool.GetNxtWholeVect();
-			if(nxt_desc_list == null)
-			{
+		while (true) {
+			org.mapdb.Fun.Tuple2<Integer, java.util.List<KeyWordDescriptor>> nxt_desc_list = phase_word_pool
+					.GetNxtWholeVect();
+			if (nxt_desc_list == null) {
 				pageid = null;
 				keyword_cnt = null;
 				return false;
 			}
 			pageid = nxt_desc_list.a;
 			keyword_cnt = KeyWordDescriptor.ProcPhase(nxt_desc_list.b);
-			if(keyword_cnt != null)
-			{
+			if (keyword_cnt != null) {
+				// it_cnt++;
 				return true;
 			}
 		}
@@ -375,6 +380,14 @@ public class InvertedIdx {
 	static java.util.concurrent.ConcurrentNavigableMap<String, Integer> WordIDByStr;
 	static java.util.concurrent.ConcurrentNavigableMap<Integer, String> WordStrByID;
 	static org.mapdb.LongConcurrentLRUMap<Long> WordCnter = null;
+
+	public static int GetDBSize() {
+		return WordStrByID.size();
+	}
+
+	public static Integer GetDfByID(Integer id) {
+		return WordDfByID.get(id);
+	}
 
 	public static Integer CreateWord(String word) {
 		if (WordIDByStr.size() != WordStrByID.size()) {
@@ -440,22 +453,69 @@ public class InvertedIdx {
 						Integer.valueOf(Integer.MAX_VALUE)), false);
 	}
 
-	// public static java.util.
+	//Core algo
 
-	public static 
-	
-	public static java.util.List<Integer> Query(java.util.List<String> term, java.util.List<java.util.List<String>> phase)
-	{
-		java.util.Vector<Integer> a;
-		a.add(Integer.valueOf(1));
-		a[1]
-		java.util.LinkedList<Integer> ret = new java.util.LinkedList<Integer>();
-		java.util.PriorityQueue<CompIt<Integer,java.util.Iterator<E>>>
-		while(??)
-		{
-			a.poll();
+	public static java.util.List<Integer> Query(
+			java.util.List<org.mapdb.Fun.Tuple2<Integer, Integer>> keywords_weight,
+			java.util.List<org.mapdb.Fun.Tuple2<java.util.List<Integer>, Integer>> keyphases_weight) {
+		int i = 0;
+		double query_vect_len = 0;
+		int keyword_exist_count = keywords_weight.size();
+		int keyphase_exist_count = keyphases_weight.size();
+		java.util.List<Integer> weight_array = new java.util.ArrayList<Integer>(
+				keyword_exist_count + keyphase_exist_count);
+		java.util.List<Double> idf_array = new java.util.ArrayList<Double>(
+				keyword_exist_count + keyphase_exist_count);
+		TagItPool<Integer, KeyWordDescriptor.KeyWordCnt> WrdPhCntPool = new TagItPool<Integer, KeyWordDescriptor.KeyWordCnt>();
+		for (org.mapdb.Fun.Tuple2<Integer, Integer> keyword_weight : keywords_weight) {
+			WordIt<KeyWordDescriptor.KeyWordCnt> it = new WordIt<KeyWordDescriptor.KeyWordCnt>(
+					i, GetTermFreq(keyword_weight.a));
+			WrdPhCntPool.AddIt(it);
+			idf_array.add(Math.log(((double) GetDBSize())
+					/ GetDfByID(keyword_weight.a)));
+			weight_array.add(keyword_weight.b);
+			query_vect_len += (keyword_weight.b) * (keyword_weight.b);
+			i++;
+
 		}
-		//java.util.Vector<String> r = new java.util.Vector<String>(term);
+		for (org.mapdb.Fun.Tuple2<java.util.List<Integer>, Integer> keyphase_weight : keyphases_weight) {
+			PhaseIt phit = new PhaseIt(i);
+			int j = 0;
+			int phase_df = 0;
+			for (Integer phword : keyphase_weight.a) {
+				phit.PutWordIt(new WordIt<KeyWordDescriptor>(j,
+						GetTermDesc(phword)));
+				phase_df += GetDfByID(phword);
+				j++;
+			}
+			WrdPhCntPool.AddIt(phit);
+			idf_array.add(((double) GetDBSize()) / phase_df * j);
+			weight_array.add(keyphase_weight.b);
+			query_vect_len += (keyphase_weight.b) * (keyphase_weight.b);
+			i++;
+		}
+		query_vect_len = Math.sqrt(query_vect_len);
+		org.mapdb.Fun.Tuple2<Integer, java.util.List<org.mapdb.Fun.Tuple2<Integer, KeyWordDescriptor.KeyWordCnt>>> vect_it = null;
+		// java.util.List<Integer> ret = new java.util.<Integer>();
+		java.util.SortedSet<org.mapdb.Fun.Tuple2<Double, Integer>> rank = new java.util.TreeSet<org.mapdb.Fun.Tuple2<Double, Integer>>();
+		while ((vect_it = WrdPhCntPool.GetNxtVect()) != null) {
+			double cos_score = 0;
+			double doc_vect_len = 0;
+			for (org.mapdb.Fun.Tuple2<Integer, KeyWordDescriptor.KeyWordCnt> word_f : vect_it.b) {
+				int word_real_f = word_f.b.body_occur + word_f.b.title_occur
+						* 255;
+				doc_vect_len += word_real_f;
+				cos_score += idf_array.get(word_f.a) * word_real_f
+						* weight_array.get(word_f.a);
+			}
+			doc_vect_len = Math.sqrt(doc_vect_len);
+			cos_score /= doc_vect_len;
+			rank.add(org.mapdb.Fun.t2(cos_score, vect_it.a));
+		}
+		java.util.List<Integer> ret = new java.util.LinkedList<Integer>();
+		for (org.mapdb.Fun.Tuple2<Double, Integer> score_doc : rank) {
+			ret.add(score_doc.b);
+		}
 		return ret;
 	}
 }

@@ -3,6 +3,10 @@ public final class TagItPool<E extends Comparable<E>, K> {
 	java.util.PriorityQueue<TagIt<E, K>> itqueue = null;
 	int orig_size = 0;
 
+	public int GetOrigSize() {
+		return orig_size;
+	}
+
 	private void PushIt(TagIt<E, K> it) {
 		if (it.NextAndUpdate()) {
 			itqueue.add(it);
