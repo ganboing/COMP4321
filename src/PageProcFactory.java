@@ -1,7 +1,5 @@
 public class PageProcFactory {
 
-	private static java.util.regex.Pattern pattern_word = java.util.regex.Pattern.compile("[a-zA-Z]+");
-	private static java.util.regex.Pattern pattern_phase = java.util.regex.Pattern.compile("\"[^\"]*\"");
 	
 	public static void main(String[] args)
 	{
