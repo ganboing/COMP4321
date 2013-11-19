@@ -453,46 +453,63 @@ public class InvertedIdx {
 						Integer.valueOf(Integer.MAX_VALUE)), false);
 	}
 
-	//Core algo
+	// Core algo
 
 	public static java.util.List<Integer> Query(
-			java.util.List<org.mapdb.Fun.Tuple2<Integer, Integer>> keywords_weight,
-			java.util.List<org.mapdb.Fun.Tuple2<java.util.List<Integer>, Integer>> keyphases_weight) {
+			java.util.Map<String, Integer> keywords_weight,
+			java.util.Map<String, Integer> keyphases_weight) {
 		int i = 0;
 		double query_vect_len = 0;
-		int keyword_exist_count = keywords_weight.size();
-		int keyphase_exist_count = keyphases_weight.size();
-		java.util.List<Integer> weight_array = new java.util.ArrayList<Integer>(
-				keyword_exist_count + keyphase_exist_count);
-		java.util.List<Double> idf_array = new java.util.ArrayList<Double>(
-				keyword_exist_count + keyphase_exist_count);
+		java.util.List<Integer> weight_array = new java.util.ArrayList<Integer>();
+		java.util.List<Double> idf_array = new java.util.ArrayList<Double>();
 		TagItPool<Integer, KeyWordDescriptor.KeyWordCnt> WrdPhCntPool = new TagItPool<Integer, KeyWordDescriptor.KeyWordCnt>();
-		for (org.mapdb.Fun.Tuple2<Integer, Integer> keyword_weight : keywords_weight) {
-			WordIt<KeyWordDescriptor.KeyWordCnt> it = new WordIt<KeyWordDescriptor.KeyWordCnt>(
-					i, GetTermFreq(keyword_weight.a));
-			WrdPhCntPool.AddIt(it);
-			idf_array.add(Math.log(((double) GetDBSize())
-					/ GetDfByID(keyword_weight.a)));
-			weight_array.add(keyword_weight.b);
-			query_vect_len += (keyword_weight.b) * (keyword_weight.b);
-			i++;
-
+		for (java.util.Map.Entry<String, Integer> keyword_weight : keywords_weight
+				.entrySet()) {
+			String stemed = StringProc.Stem(keyword_weight.getKey());
+			Integer keyword_id = FindIDByWord(stemed);
+			if (keyword_id != null) {
+				WordIt<KeyWordDescriptor.KeyWordCnt> it = new WordIt<KeyWordDescriptor.KeyWordCnt>(
+						i, GetTermFreq(keyword_id));
+				WrdPhCntPool.AddIt(it);
+				idf_array.add(Math.log(((double) GetDBSize())
+						/ GetDfByID(keyword_id)));
+				Integer weight = keyword_weight.getValue();
+				weight_array.add(weight);
+				query_vect_len += weight * weight;
+				i++;
+			}
 		}
-		for (org.mapdb.Fun.Tuple2<java.util.List<Integer>, Integer> keyphase_weight : keyphases_weight) {
-			PhaseIt phit = new PhaseIt(i);
+		for (java.util.Map.Entry<String, Integer> keyphase_weight : keyphases_weight
+				.entrySet()) {
+			java.util.regex.Matcher matcher = StringProc
+					.GetWordMatcher(keyphase_weight.getKey());
+			boolean should_add_phase = true;
+			PhaseIt phit = null;
 			int j = 0;
 			int phase_df = 0;
-			for (Integer phword : keyphase_weight.a) {
-				phit.PutWordIt(new WordIt<KeyWordDescriptor>(j,
-						GetTermDesc(phword)));
-				phase_df += GetDfByID(phword);
-				j++;
+			while (matcher.find()) {
+				String nxt_word = Porter.Porter.stripAffixes(matcher.group());
+				Integer word_id = FindIDByWord(nxt_word);
+				if (word_id == null) {
+					break;
+				} else {
+					if (phit == null) {
+						phit = new PhaseIt(i);
+					}
+					phit.PutWordIt(new WordIt<KeyWordDescriptor>(j,
+							GetTermDesc(word_id)));
+					phase_df += GetDfByID(word_id);
+					j++;
+				}
 			}
-			WrdPhCntPool.AddIt(phit);
-			idf_array.add(((double) GetDBSize()) / phase_df * j);
-			weight_array.add(keyphase_weight.b);
-			query_vect_len += (keyphase_weight.b) * (keyphase_weight.b);
-			i++;
+			if (should_add_phase) {
+				WrdPhCntPool.AddIt(phit);
+				idf_array.add(Math.log(((double) GetDBSize()) / phase_df * j));
+				Integer weight = keyphase_weight.getValue();
+				weight_array.add(weight);
+				query_vect_len += weight * weight;
+				i++;
+			}
 		}
 		query_vect_len = Math.sqrt(query_vect_len);
 		org.mapdb.Fun.Tuple2<Integer, java.util.List<org.mapdb.Fun.Tuple2<Integer, KeyWordDescriptor.KeyWordCnt>>> vect_it = null;

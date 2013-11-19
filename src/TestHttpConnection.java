@@ -53,10 +53,12 @@ final class HttpWorkerTask implements
 		should_continue = false;
 	}
 	
+	Integer page_id;
 	String url_to_fetch;
 
-	public HttpWorkerTask(String _url_to_fetch) {
+	public HttpWorkerTask(String _url_to_fetch, Integer _page_id) {
 		url_to_fetch = _url_to_fetch;
+		page_id = _page_id;
 	}
 
 	@Override
