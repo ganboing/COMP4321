@@ -2,6 +2,8 @@ public class Init {
 
 	public static boolean DEBUG;
 	
+	public static Object DBLock = new Object();
+	
 	public static jdbm.RecordManager recman;
 	
 	/**
