@@ -1,8 +1,6 @@
-public final class KeyWordMap extends java.util.HashMap<String, KeyWordDescriptor> {
+public final class KeyWordMap extends
+		java.util.HashMap<String, KeyWordDescriptor> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8970906244201879595L;
 
 	private KeyWordDescriptor getDesc(String word) {
@@ -21,16 +19,6 @@ public final class KeyWordMap extends java.util.HashMap<String, KeyWordDescripto
 		getDesc(word).appendTitleOccur(pos);
 	}
 
-	/*
-	 * public void print() { System.out.print("{ "); for
-	 * (java.util.Map.Entry<String, Integer> i : this.entrySet()) {
-	 * System.out.printf("(%s, %d), ", i.getKey(), i.getValue()); }
-	 * System.out.print(" }\n"); }
-	 */
-
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 
 		System.out.print("not implemented");
