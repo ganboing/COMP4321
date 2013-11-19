@@ -441,7 +441,7 @@ public final class StopStem
 	
 	public static String stem(String str)
 	{
-		return Porter.stripAffixes(str);
+		return Porter.Porter.stripAffixes(str);
 	}
 	
 	public static String process_input_word(String str)
@@ -449,7 +449,7 @@ public final class StopStem
 		String output_str = null;
 		if(!isStopWord(str))
 		{
-			output_str=Porter.stripAffixes(str);
+			output_str=Porter.Porter.stripAffixes(str);
 		}
 		return output_str;
 	}
