@@ -496,7 +496,6 @@ public class InvertedIdx {
 		}
 		query_vect_len = Math.sqrt(query_vect_len);
 		org.mapdb.Fun.Tuple2<Integer, java.util.List<org.mapdb.Fun.Tuple2<Integer, KeyWordDescriptor.KeyWordCnt>>> vect_it = null;
-		// java.util.List<Integer> ret = new java.util.<Integer>();
 		java.util.SortedSet<org.mapdb.Fun.Tuple2<Double, Integer>> rank = new java.util.TreeSet<org.mapdb.Fun.Tuple2<Double, Integer>>();
 		while ((vect_it = WrdPhCntPool.GetNxtVect()) != null) {
 			double cos_score = 0;

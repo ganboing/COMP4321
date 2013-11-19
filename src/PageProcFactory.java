@@ -1,6 +1,3 @@
-import java.util.LinkedList;
-
-
 public class PageProcFactory {
 
 	public  static void ProcPage(IntermediatePageDescriptor imm_desc)
