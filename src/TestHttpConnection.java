@@ -29,8 +29,6 @@ final class JavaDontHaveGlobalVar {
 			"http://www.cse.ust.hk/pg/",
 			"http://www.cse.ust.hk/pg/hkust_only/", };
 	int var_cnt = urls.length;
-	
-	
 
 	public synchronized String[] GiveMeUrl(int cnt) {
 		if (var_cnt < cnt) {
@@ -41,18 +39,15 @@ final class JavaDontHaveGlobalVar {
 	}
 }
 
-
-
 final class HttpWorkerTask implements
 		java.util.concurrent.Callable<IntermediatePageDescriptor> {
 
 	static volatile boolean should_continue = true;
-	
-	public static void stop_fetching()
-	{
+
+	public static void stop_fetching() {
 		should_continue = false;
 	}
-	
+
 	Integer page_id;
 	String url_to_fetch;
 
@@ -64,34 +59,57 @@ final class HttpWorkerTask implements
 	@Override
 	public IntermediatePageDescriptor call() throws Exception {
 		System.out.printf("HttpWorker For %s is running\n", url_to_fetch);
+		java.net.URL url = new java.net.URL(url_to_fetch);
 		try {
-			if(!should_continue)
-			{
+			if (!should_continue) {
 				throw new Exception("discontinued\n");
 			}
-			org.htmlparser.Parser parser = new org.htmlparser.Parser(url_to_fetch);
-			String title = new org.htmlparser.visitors.HtmlPage(parser).getTitle();
-			if(!should_continue)
-			{
+			java.net.URLConnection url_connection = url.openConnection();
+			long last_mod = url_connection.getLastModified();
+			if (last_mod == 0) {
+				last_mod = url_connection.getDate();
+			}
+			if (Init.DEBUG) {
+				System.out.printf("last mod == %d\n", last_mod);
+			}
+			org.htmlparser.Parser parser = new org.htmlparser.Parser(
+					url_to_fetch);
+			// String title = new
+			// org.htmlparser.visitors.HtmlPage(parser).getTitle();
+			String title;
+			try {
+				title = parser
+						.extractAllNodesThatMatch(
+								new org.htmlparser.filters.TagNameFilter(
+										"title")).elementAt(0)
+						.toPlainTextString();
+			} catch (Exception e) {
+				title = null;
+			}
+			if (!should_continue) {
 				throw new Exception("discontinued\n");
 			}
 			org.htmlparser.beans.StringBean sb = new org.htmlparser.beans.StringBean();
 			sb.setURL(url_to_fetch);
 			String words = sb.getStrings();
-			if(!should_continue)
-			{
+			if (!should_continue) {
 				throw new Exception("discontinued\n");
 			}
 			org.htmlparser.beans.LinkBean lb = new org.htmlparser.beans.LinkBean();
 			lb.setURL(url_to_fetch);
 			java.net.URL[] URL_array = lb.getLinks();
-			return new IntermediatePageDescriptor(url_to_fetch,title,  words,
-					URL_array);
-
+			if (!should_continue) {
+				throw new Exception("discontinued\n");
+			}
+			return new IntermediatePageDescriptor(page_id, last_mod, title,
+					words, URL_array);
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			System.out.printf("HttpWorker For %s is finished\n", url_to_fetch);
+			if (Init.DEBUG) {
+				System.out.printf("HttpWorker For %s is finished\n",
+						url_to_fetch);
+			}
 		}
 	}
 }
@@ -123,21 +141,20 @@ public class TestHttpConnection {
 		System.out.printf("argc == %d \n", args.length);
 		int page_cnt = Integer.parseInt(args[0]);
 
-		java.util.concurrent.ExecutorService IdxExecutor = java.util.concurrent.Executors.newFixedThreadPool(0x04);
+		java.util.concurrent.ExecutorService IdxExecutor = java.util.concurrent.Executors
+				.newFixedThreadPool(0x04);
 		java.util.concurrent.CompletionService<IntermediatePageDescriptor> IdxExecSrv = new java.util.concurrent.ExecutorCompletionService<IntermediatePageDescriptor>(
 				IdxExecutor);
 
 		for (int i = 0; i < page_cnt; i++) {
-			IdxExecSrv.submit(new HttpWorkerTask(JavaDontHaveGlobalVar.urls[i]));
+			IdxExecSrv
+					.submit(new HttpWorkerTask(JavaDontHaveGlobalVar.urls[i]));
 		}
 
-		
-		
 		try {
-			while(true)
-			{
+			while (true) {
 				Thread.sleep(50);
-				
+
 			}
 			// java.net.URLConnection connection =
 			// org.htmlparser.lexer.Page.getConnectionManager().openConnection(url_requested);
