@@ -465,8 +465,12 @@ public class InvertedIdx {
 		TagItPool<Integer, KeyWordDescriptor.KeyWordCnt> WrdPhCntPool = new TagItPool<Integer, KeyWordDescriptor.KeyWordCnt>();
 		for (java.util.Map.Entry<String, Integer> keyword_weight : keywords_weight
 				.entrySet()) {
-			String stemed = StringProc.Stem(keyword_weight.getKey());
-			Integer keyword_id = FindIDByWord(stemed);
+			String stemed = StopStem
+					.process_input_word(keyword_weight.getKey());
+			Integer keyword_id = null;
+			if (stemed != null) {
+				keyword_id = FindIDByWord(stemed);
+			}
 			if (keyword_id != null) {
 				WordIt<KeyWordDescriptor.KeyWordCnt> it = new WordIt<KeyWordDescriptor.KeyWordCnt>(
 						i, GetTermFreq(keyword_id));
@@ -488,9 +492,13 @@ public class InvertedIdx {
 			int j = 0;
 			int phase_df = 0;
 			while (matcher.find()) {
-				String nxt_word = Porter.Porter.stripAffixes(matcher.group());
-				Integer word_id = FindIDByWord(nxt_word);
+				String nxt_word = StopStem.process_input_word(matcher.group());
+				Integer word_id = null;
+				if (nxt_word != null) {
+					word_id = FindIDByWord(nxt_word);
+				}
 				if (word_id == null) {
+					should_add_phase = false;
 					break;
 				} else {
 					if (phit == null) {
