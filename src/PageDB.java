@@ -43,6 +43,11 @@ public final class PageDB {
 	public static Integer GetOnePending() {
 		return PagePending.pollFirst();
 	}
+	
+	public static String GetPageUrl(Integer Page_id)
+	{
+		return PageURLByID.get(Page_id);
+	}
 
 	private static Integer CreatePage(String url) {
 		if (PageURLByID.size() != PageIDByURL.size()) {

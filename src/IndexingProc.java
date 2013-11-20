@@ -1,7 +1,7 @@
 public final class IndexingProc {
 
 	private static final int POOL_SIZE = 16;
-	
+
 	private static java.util.concurrent.ExecutorService IdxExecutor = java.util.concurrent.Executors
 			.newFixedThreadPool(POOL_SIZE);
 	// IdxExecutor.
@@ -11,19 +11,35 @@ public final class IndexingProc {
 	private static final class HttpWorkerMonitor implements Runnable {
 		public static volatile boolean should_continue = true;
 
-		private void PickAndProc()
-		{
+		private static int page_indexing = 0;
+
+		private void PickAndProcWithWait() {
 			try {
-				java.util.concurrent.Future<IntermediatePageDescriptor> impage_future = IndexingProc.IdxExecSrv.take();
+				java.util.concurrent.Future<IntermediatePageDescriptor> impage_future = IndexingProc.IdxExecSrv
+						.take();
 				PageProc.ProcPage(impage_future.get());
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(-2);
 			}
 		}
-		
+
+		private boolean PickAndProcWithoutWait() {
+			try {
+				java.util.concurrent.Future<IntermediatePageDescriptor> impage_future = IndexingProc.IdxExecSrv
+						.poll();
+				if (impage_future != null) {
+					PageProc.ProcPage(impage_future.get());
+					return true;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(-2);
+			}
+			return false;
+		}
+
 		public void run() {
-			int page_indexing = 0;
 			while (should_continue) {
 				try {
 					Thread.sleep(50);
@@ -31,19 +47,18 @@ public final class IndexingProc {
 					e.printStackTrace();
 					System.exit(-2);
 				}
-				if(page_indexing < POOL_SIZE)
-				{
-					for(int i=page_indexing ; i < POOL_SIZE ; i++)
-					{
-						PageDB.GetOnePending();
-					}
+				for (; page_indexing < POOL_SIZE; page_indexing++) {
+					Integer page_id = PageDB.GetOnePending();
+					IdxExecSrv.submit(new HttpWorkerTask(PageDB
+							.GetPageUrl(page_id), page_id));
 				}
-				
+				while (PickAndProcWithoutWait()) {
+					page_indexing--;
+				}
 			}
-			HttpWorkerTask.should_continue= false;
-			for(int i = 0; i < page_indexing ; i++)
-			{
-				PickAndProc();
+			HttpWorkerTask.should_continue = false;
+			for (int i = 0; i < page_indexing; i++) {
+				PickAndProcWithWait();
 			}
 		}
 	}
