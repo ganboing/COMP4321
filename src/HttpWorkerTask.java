@@ -33,7 +33,7 @@ final class HttpWorkerTask implements
 		try {
 			java.net.URL url = new java.net.URL(url_to_fetch);
 			if (!should_continue) {
-				throw new Exception("discontinued\n");
+				return new IntermediatePageDescriptor(page_id, true);
 			}
 			java.net.URLConnection url_connection = url.openConnection();
 			long last_mod = url_connection.getLastModified();
@@ -58,24 +58,24 @@ final class HttpWorkerTask implements
 				title = null;
 			}
 			if (!should_continue) {
-				throw new Exception("discontinued\n");
+				return new IntermediatePageDescriptor(page_id, true);
 			}
 			org.htmlparser.beans.StringBean sb = new org.htmlparser.beans.StringBean();
 			sb.setURL(url_to_fetch);
 			String words = sb.getStrings();
 			if (!should_continue) {
-				throw new Exception("discontinued\n");
+				return new IntermediatePageDescriptor(page_id, true);
 			}
 			org.htmlparser.beans.LinkBean lb = new org.htmlparser.beans.LinkBean();
 			lb.setURL(url_to_fetch);
 			java.net.URL[] URL_array = lb.getLinks();
 			if (!should_continue) {
-				throw new Exception("discontinued\n");
+				return new IntermediatePageDescriptor(page_id, true);
 			}
 			return new IntermediatePageDescriptor(page_id, last_mod, title,
 					words, URL_array);
 		} catch (Exception e) {
-			return new IntermediatePageDescriptor(page_id, 0, null, null, null);
+			return new IntermediatePageDescriptor(page_id, false);
 		} finally {
 			if (Init.DEBUG) {
 				System.out.printf("HttpWorker For %s is finished\n",

@@ -414,27 +414,20 @@ public class InvertedIdx {
 		return WordIDByStr.get(word);
 	}
 
-	public static void InsertDoc(Integer page_id,
-			java.util.Map<String, KeyWordDescriptor> key_word_to_add) {
+	public static Integer InsertWordDoc(Integer page_id, String word,
+			KeyWordDescriptor word_desc) {
 		// assert (page_id != null);
-		if (key_word_to_add != null) {
-			for (java.util.Map.Entry<String, KeyWordDescriptor> keyword_desc_pair : key_word_to_add
-					.entrySet()) {
-				Integer keyword_id = CreateWord(keyword_desc_pair.getKey());
-				WordDescByWordDocID.put(org.mapdb.Fun.t2(keyword_id, page_id),
-						keyword_desc_pair.getValue());
-				Integer keyword_Df = WordDfByID.get(keyword_id);
-				if (keyword_Df == null) {
-					keyword_Df = Integer.valueOf(keyword_desc_pair.getValue()
-							.Cnt());
-				} else {
-					keyword_Df = keyword_Df
-							+ Integer.valueOf(keyword_desc_pair.getValue()
-									.Cnt());
-				}
-				WordDfByID.put(keyword_id, keyword_Df);
-			}
+		Integer keyword_id = CreateWord(word);
+		WordDescByWordDocID.put(org.mapdb.Fun.t2(keyword_id, page_id),
+				word_desc);
+		Integer keyword_Df = WordDfByID.get(keyword_id);
+		if (keyword_Df == null) {
+			keyword_Df = Integer.valueOf(word_desc.Cnt());
+		} else {
+			keyword_Df = keyword_Df + Integer.valueOf(word_desc.Cnt());
 		}
+		WordDfByID.put(keyword_id, keyword_Df);
+		return keyword_id;
 	}
 
 	public static java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Integer, Integer>, KeyWordDescriptor.KeyWordCnt> GetTermFreq(

@@ -1,12 +1,18 @@
 public class IntermediatePageDescriptor {
 
-	public Long PageID;
-	public String title;
-	public java.util.Set<String> links;
-	public long last_mod;
-	public int size;
-	public KeyWordMap keyword_map;
+	public Integer PageID = null;
+	public String title = null;
+	public java.util.Set<String> links = null;
+	public long last_mod = 0;
+	public KeyWordMap keyword_map = null;
+	public boolean interrupted = false;
 
+	public IntermediatePageDescriptor(Integer page_id, boolean should_pending)
+	{
+		PageID = page_id;
+		interrupted = should_pending;
+	}
+	
 	public IntermediatePageDescriptor(Integer page_id, long _last_mod,
 			String _title, String _content, java.net.URL[] _links) {
 

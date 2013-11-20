@@ -1,31 +1,19 @@
 public class PageProc {
 
-	
-	public static void main(String[] args)
-	{
-		System.out.println("\"[^\"]*\"");
-	}
-	
-	public  static void ProcPage(IntermediatePageDescriptor imm_desc)
-	{
+	public static void ProcPage(IntermediatePageDescriptor imm_desc) {
+		if (imm_desc.interrupted) {
+			PageDB.AddOnePending(imm_desc.PageID);
+			return;
+		}
 		PageDB.UpdateLink(imm_desc.PageID, imm_desc.links, 0.5);
-		WebPageDescriptor old_desc = PageDB.GetDesc(imm_desc.PageID);
-		if(old_desc != null)
-		{
-			java.util.List<Long> keyword = old_desc.keywords;
-			for(Long key_word_id : keyword)
-			{
-				InvertedIdx.RemoveWord(imm_desc.PageID, key_word_id);
+		if (imm_desc.keyword_map != null) {
+			for (java.util.Map.Entry<String, KeyWordDescriptor> SK : imm_desc.keyword_map
+					.entrySet()) {
+				Integer word_id = InvertedIdx.InsertWordDoc(imm_desc.PageID,
+						SK.getKey(), SK.getValue());
+				PageDB.AddDocWord(imm_desc.PageID, word_id, SK.getValue().Cnt());
 			}
 		}
-		java.util.List<Long> key_word_id_list = new java.util.LinkedList<Long>();
-		for(java.util.Map.Entry<String, KeyWordDescriptor> i : imm_desc.keyword_map.entrySet())
-		{
-			Long key_word_id = InvertedIdx.FindIDByWord(i.getKey(), i.getValue().Cnt());
-			key_word_id_list.add(key_word_id);
-			InvertedIdx.InsertWord(imm_desc.PageID, key_word_id, i.getValue());
-		}
-		WebPageDescriptor new_desc = new WebPageDescriptor(imm_desc,key_word_id_list);
-		PageDB.UpdateDesc(imm_desc.PageID, new_desc);
+		PageDB.CreateMeta(imm_desc.PageID, imm_desc.title, imm_desc.last_mod);
 	}
 }

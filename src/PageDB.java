@@ -1,21 +1,21 @@
 public final class PageDB {
 
-	public static final class PageRankWorkingThread implements Runnable
-	{
+	public static final class PageRankWorkingThread implements Runnable {
 
 		@Override
 		public void run() {
-			
+
 		}
-		
+
 	}
-	
+
 	// static private java.util.concurrent.ConcurrentMap<Integer,
 	// WebPageDescriptor> PageDesc;
 	static private java.util.NavigableSet<org.mapdb.Fun.Tuple3<Integer, Integer, Integer>> PageContent;
 	/* Scheme (DocID, Occur_Cnt, WordID) */
 	static private java.util.concurrent.ConcurrentMap<Integer, String> PageTitle;
-	static private java.util.concurrent.ConcurrentMap<Integer, Integer> PagemaxTf;
+	// static private java.util.concurrent.ConcurrentMap<Integer, Integer>
+	// PagemaxTf;
 	static private java.util.concurrent.ConcurrentMap<Integer, Long> PageLastMod;
 	static private java.util.concurrent.ConcurrentNavigableMap<Integer, Double> PageRankScore;
 	static private java.util.NavigableSet<Integer> PagePending;
@@ -39,13 +39,19 @@ public final class PageDB {
 	 * PageRvLink.remove(org.mapdb.Fun.t2(lnk.b, lnk.a)); }
 	 * PageLink.removeAll(children); }
 	 */
+	private static boolean URL_Filter(String url) {
+		return true;
+	}
 
-	public static Integer GetOnePending() {
+	public static Integer PollOnePending() {
 		return PagePending.pollFirst();
 	}
-	
-	public static String GetPageUrl(Integer Page_id)
-	{
+
+	public static void AddOnePending(Integer pageid) {
+		PagePending.add(pageid);
+	}
+
+	public static String GetPageUrl(Integer Page_id) {
 		return PageURLByID.get(Page_id);
 	}
 
@@ -60,46 +66,44 @@ public final class PageDB {
 			}
 			return ret;
 		}
-		Integer assigned_id = Integer.valueOf(PageURLByID.size());
-		PagePending.add(assigned_id);
-		PageIDByURL.put(url, assigned_id);
-		PageURLByID.put(assigned_id, url);
-		return assigned_id;
-	}
-
-	private static void CreateLinks(Integer pageid, java.util.Set<Integer> links) {
-		for (Integer child_id : links) {
-			PageLink.add(org.mapdb.Fun.t2(pageid, child_id));
-			PageRvLink.add(org.mapdb.Fun.t2(child_id, pageid));
+		if (URL_Filter(url)) {
+			Integer assigned_id = Integer.valueOf(PageURLByID.size());
+			PagePending.add(assigned_id);
+			PageIDByURL.put(url, assigned_id);
+			PageURLByID.put(assigned_id, url);
+			return assigned_id;
+		} else {
+			return null;
 		}
 	}
 
-	public static void UpdateLink(Integer pageID,
+	private static void CreateLink(Integer parent, Integer child) {
+		PageLink.add(org.mapdb.Fun.t2(parent, child));
+		PageRvLink.add(org.mapdb.Fun.t2(child, parent));
+	}
+
+	public static void UpdateLink(Integer pageid,
 			java.util.Set<String> links_urls, double damp) {
 		// DeleteLinks(pageID);
-		java.util.Set<Integer> link_resolved = new java.util.HashSet<Integer>();
-		for (String url : links_urls) {
-			Integer newpageid = CreatePage(url);
-			link_resolved.add(newpageid);
-		}
-		CreateLinks(pageID, link_resolved);
-	}
-
-	public static void CreateContent(Integer pageID,
-			java.util.Map<Integer, Integer> words) {
-		PagePending.remove(pageID);
-		for (java.util.Map.Entry<Integer, Integer> wordid_cnt_pair : words
-				.entrySet()) {
-			PageContent.add(org.mapdb.Fun.t3(pageID,
-					wordid_cnt_pair.getValue(), wordid_cnt_pair.getKey()));
+		if (links_urls != null) {
+			for (String url : links_urls) {
+				Integer newpageid = CreatePage(url);
+				if (newpageid != null) {
+					CreateLink(pageid, newpageid);
+				}
+			}
 		}
 	}
 
-	public static void CreateMeta(Integer pageID, String title, Integer max_tf,
-			Long last_mod) {
+	public static void AddDocWord(Integer pageID, Integer word_id,
+			Integer word_freq) {
+		PageContent.add(org.mapdb.Fun.t3(pageID, word_freq, word_id));
+	}
+
+	public static void CreateMeta(Integer pageID, String title, Long last_mod) {
 		PageTitle.put(pageID, title);
 		PageLastMod.put(pageID, last_mod);
-		PagemaxTf.put(pageID, max_tf);
+		// PagemaxTf.put(pageID, max_tf);
 	}
 
 	public static String GetTitle(Integer pageID) {
