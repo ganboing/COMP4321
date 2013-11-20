@@ -67,12 +67,7 @@ public class TestHttpConnection {
 		System.out.printf("argc == %d \n", args.length);
 		int page_cnt = Integer.parseInt(args[0]);
 
-		java.util.concurrent.ExecutorService IdxExecutor = java.util.concurrent.Executors
-				.newFixedThreadPool(0x04);
-		//IdxExecutor.
-		java.util.concurrent.CompletionService<IntermediatePageDescriptor> IdxExecSrv = new java.util.concurrent.ExecutorCompletionService<IntermediatePageDescriptor>(
-				IdxExecutor);
-
+		
 		IdxExecutor.
 		
 		for (int i = 0; i < page_cnt; i++) {

@@ -1,8 +1,12 @@
 final class HttpWorkerTask implements
 		java.util.concurrent.Callable<IntermediatePageDescriptor> {
-	public static final class FetchException extends Exception {
+	public static final class FetchException extends Exception  {
 		private static final long serialVersionUID = 3151508604775978819L;
-		public Integer pageid = null;
+		private Integer pageid = null;
+		public Integer GetPageId()
+		{
+			return pageid;
+		}
 		public FetchException(Integer _pageid) {
 			super();
 			pageid = _pageid;
@@ -24,10 +28,10 @@ final class HttpWorkerTask implements
 	}
 
 	@Override
-	public IntermediatePageDescriptor call() throws Exception {
+	public IntermediatePageDescriptor call() {
 		System.out.printf("HttpWorker For %s is running\n", url_to_fetch);
-		java.net.URL url = new java.net.URL(url_to_fetch);
 		try {
+			java.net.URL url = new java.net.URL(url_to_fetch);
 			if (!should_continue) {
 				throw new Exception("discontinued\n");
 			}
@@ -71,7 +75,7 @@ final class HttpWorkerTask implements
 			return new IntermediatePageDescriptor(page_id, last_mod, title,
 					words, URL_array);
 		} catch (Exception e) {
-			throw new FetchException(page_id);
+			return new IntermediatePageDescriptor(page_id, 0, null, null, null);
 		} finally {
 			if (Init.DEBUG) {
 				System.out.printf("HttpWorker For %s is finished\n",

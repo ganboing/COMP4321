@@ -1,4 +1,4 @@
-public class PageProcFactory {
+public class PageProc {
 
 	
 	public static void main(String[] args)
@@ -6,7 +6,7 @@ public class PageProcFactory {
 		System.out.println("\"[^\"]*\"");
 	}
 	
-	/*public  static void ProcPage(IntermediatePageDescriptor imm_desc)
+	public  static void ProcPage(IntermediatePageDescriptor imm_desc)
 	{
 		PageDB.UpdateLink(imm_desc.PageID, imm_desc.links, 0.5);
 		WebPageDescriptor old_desc = PageDB.GetDesc(imm_desc.PageID);
@@ -27,5 +27,5 @@ public class PageProcFactory {
 		}
 		WebPageDescriptor new_desc = new WebPageDescriptor(imm_desc,key_word_id_list);
 		PageDB.UpdateDesc(imm_desc.PageID, new_desc);
-	}*/
+	}
 }

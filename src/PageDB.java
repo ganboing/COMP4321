@@ -1,5 +1,15 @@
 public final class PageDB {
 
+	public static final class PageRankWorkingThread implements Runnable
+	{
+
+		@Override
+		public void run() {
+			
+		}
+		
+	}
+	
 	// static private java.util.concurrent.ConcurrentMap<Integer,
 	// WebPageDescriptor> PageDesc;
 	static private java.util.NavigableSet<org.mapdb.Fun.Tuple3<Integer, Integer, Integer>> PageContent;
@@ -7,6 +17,7 @@ public final class PageDB {
 	static private java.util.concurrent.ConcurrentMap<Integer, String> PageTitle;
 	static private java.util.concurrent.ConcurrentMap<Integer, Integer> PagemaxTf;
 	static private java.util.concurrent.ConcurrentMap<Integer, Long> PageLastMod;
+	static private java.util.concurrent.ConcurrentNavigableMap<Integer, Double> PageRankScore;
 	static private java.util.NavigableSet<Integer> PagePending;
 	/*
 	 * static private java.util.concurrent.ConcurrentMap<Integer, Integer>
@@ -29,8 +40,8 @@ public final class PageDB {
 	 * PageLink.removeAll(children); }
 	 */
 
-	public static String GetOnePending() {
-		return PageURLByID.get(PagePending.first());
+	public static Integer GetOnePending() {
+		return PagePending.pollFirst();
 	}
 
 	private static Integer CreatePage(String url) {
