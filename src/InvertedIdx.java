@@ -379,7 +379,27 @@ public class InvertedIdx {
 
 	static java.util.concurrent.ConcurrentNavigableMap<String, Integer> WordIDByStr;
 	static java.util.concurrent.ConcurrentNavigableMap<Integer, String> WordStrByID;
-	static org.mapdb.LongConcurrentLRUMap<Long> WordCnter = null;
+
+	// static org.mapdb.LongConcurrentLRUMap<Long> WordCnter = null;
+
+	public static void InitOriginal(org.mapdb.DB SE_DB) {
+		WordDfByID = SE_DB.createTreeMap("INV_IDX_WordDfByID").make();
+		WordDescByWordDocID = SE_DB
+				.createTreeMap("INV_IDX_WordDescByWordDocID")
+				.keySerializer(org.mapdb.BTreeKeySerializer.TUPLE2).make();
+		WordTfByWordDocID = SE_DB.createTreeMap("INV_IDX_WordTfByWordDocID")
+				.keySerializer(org.mapdb.BTreeKeySerializer.TUPLE2).make();
+		WordIDByStr = SE_DB.createTreeMap("INV_IDX_WordIDByStr").make();
+		WordStrByID = SE_DB.createTreeMap("INV_IDX_WordStrByID").make();
+	}
+
+	public static void Init(org.mapdb.DB SE_DB) {
+		WordDfByID = SE_DB.getTreeMap("INV_IDX_WordDfByID");
+		WordDescByWordDocID = SE_DB.getTreeMap("INV_IDX_WordDescByWordDocID");
+		WordTfByWordDocID = SE_DB.getTreeMap("INV_IDX_WordTfByWordDocID");
+		WordIDByStr = SE_DB.getTreeMap("INV_IDX_WordIDByStr");
+		WordStrByID = SE_DB.getTreeMap("INV_IDX_WordStrByID");
+	}
 
 	public static int GetDBSize() {
 		return WordStrByID.size();
