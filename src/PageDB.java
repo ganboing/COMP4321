@@ -39,11 +39,35 @@ public final class PageDB {
 	 * PageRvLink.remove(org.mapdb.Fun.t2(lnk.b, lnk.a)); }
 	 * PageLink.removeAll(children); }
 	 */
-	public static void Init()
-	{
-		
+	public static void InitOriginal(org.mapdb.DB SE_DB) {
+		PageContent = SE_DB.createTreeSet("PAGE_DB_PageContent")
+				.serializer(org.mapdb.BTreeKeySerializer.TUPLE3).make();
+		PageTitle = SE_DB.createTreeMap("PAGE_DB_PageTitle").make();
+		PageLastMod = SE_DB.createTreeMap("PAGE_DB_PageLastMod").make();
+		PageRankScore = SE_DB.createTreeMap("PAGE_DB_PageRankScore").make();
+		PagePending = SE_DB.createTreeSet("PAGE_DB_PagePending").make();
+		PageLink = SE_DB.createTreeSet("PAGE_DB_PageLink")
+				.serializer(org.mapdb.BTreeKeySerializer.TUPLE2).make();
+		PageRvLink = SE_DB.createTreeSet("PAGE_DB_PageRvLink")
+				.serializer(org.mapdb.BTreeKeySerializer.TUPLE2).make();
+		PageIDByURL = SE_DB.createTreeMap("PAGE_DB_PageIDByURL")
+				.counterEnable().make();
+		PageURLByID = SE_DB.createTreeMap("PAGE_DB_PageURLByID")
+				.counterEnable().make();
 	}
-	
+
+	public static void Init(org.mapdb.DB SE_DB) {
+		PageContent = SE_DB.getTreeSet("PAGE_DB_PageContent");
+		PageTitle = SE_DB.getTreeMap("PAGE_DB_PageTitle");
+		PageLastMod = SE_DB.getTreeMap("PAGE_DB_PageLastMod");
+		PageRankScore = SE_DB.getTreeMap("PAGE_DB_PageRankScore");
+		PagePending = SE_DB.getTreeSet("PAGE_DB_PagePending");
+		PageLink = SE_DB.getTreeSet("PAGE_DB_PageLink");
+		PageRvLink = SE_DB.getTreeSet("PAGE_DB_PageRvLink");
+		PageIDByURL = SE_DB.getTreeMap("PAGE_DB_PageIDByURL");
+		PageURLByID = SE_DB.getTreeMap("PAGE_DB_PageURLByID");
+	}
+
 	private static boolean URL_Filter(String url) {
 		return true;
 	}

@@ -31,6 +31,24 @@ public class Init {
 		{
 			System.err.println("Db file not found!");
 		}
+		boolean is_init = false;
+		{
+			String init_status = arg_map.get("Init");
+			if(init_status != null)
+			{
+				is_init = Boolean.parseBoolean(init_status);
+			}
+		}
+		if(is_init)
+		{
+			PageDB.InitOriginal(SE_DB);
+			InvertedIdx.InitOriginal(SE_DB);
+		}
+		else
+		{
+			PageDB.Init(SE_DB);
+			InvertedIdx.Init(SE_DB);
+		}
 		
 		recman = jdbm.RecordManagerFactory.createRecordManager(args[0]);
 		java.net.URL url_to_start = new java.net.URL(args[1]);
