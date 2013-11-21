@@ -39,6 +39,8 @@ public final class PageDB {
 	 * PageRvLink.remove(org.mapdb.Fun.t2(lnk.b, lnk.a)); }
 	 * PageLink.removeAll(children); }
 	 */
+	public static void Init()
+	
 	private static boolean URL_Filter(String url) {
 		return true;
 	}

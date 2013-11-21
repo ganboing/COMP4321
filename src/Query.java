@@ -1,5 +1,8 @@
 public class Query {
-	public java.util.List<Integer> query(String query_term) {
+
+	public static volatile int ThreadCnt = 0;
+
+	public static java.util.List<Integer> query(String query_term) {
 		java.util.Map<String, Integer> keyword_weight_map = new java.util.HashMap<String, Integer>();
 		java.util.Map<String, Integer> keyphase_weight_map = new java.util.HashMap<String, Integer>();
 
@@ -28,7 +31,6 @@ public class Query {
 			if (weight == null) {
 				keyphase_weight_map.put(phase, 1);
 			} else {
-
 				keyphase_weight_map.put(phase, weight + 1);
 			}
 		}
@@ -44,7 +46,12 @@ public class Query {
 				keyword_weight_map.put(keyword, weight + 1);
 			}
 		}
-		return InvertedIdx.Query(keyword_weight_map, keyphase_weight_map);
-
+		java.util.List<Integer> ret;
+		synchronized (Init.DBLock) {
+			ThreadCnt++;
+			ret = InvertedIdx.Query(keyword_weight_map, keyphase_weight_map);
+			ThreadCnt--;
+		}
+		return ret;
 	}
 }
