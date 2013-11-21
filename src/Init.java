@@ -2,7 +2,7 @@ public class Init {
 
 	public static boolean DEBUG;
 	
-	public static Object DBLock = new Object();
+	public static java.util.concurrent.Semaphore DBSem = new java.util.concurrent.Semaphore(1);
 	
 	private static org.mapdb.DB SE_DB = null;
 	

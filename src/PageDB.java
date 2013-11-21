@@ -40,6 +40,9 @@ public final class PageDB {
 	 * PageLink.removeAll(children); }
 	 */
 	public static void Init()
+	{
+		
+	}
 	
 	private static boolean URL_Filter(String url) {
 		return true;
