@@ -1,5 +1,10 @@
 public class Query {
 
+	public static final class QueryResult {
+		public String Title = null;
+		public Long LastMod = null;
+	}
+	
 	public static volatile boolean should_continue = false;
 
 	public static java.util.List<String> MostFreqTerm(Integer pageid,
@@ -24,6 +29,19 @@ public class Query {
 		}
 		return ret;
 	}
+	
+	public static java.util.List<QueryResult> PresentQueryResult(String query_term) 
+	{
+		java.util.List<Integer> result_id = query(query_term);
+		//java.util.List<E>
+		for(Integer pageid : result_id)
+		{
+			
+		}
+		return null;
+	}
+	
+	//public static 
 
 	public static java.util.List<Integer> query(String query_term) {
 

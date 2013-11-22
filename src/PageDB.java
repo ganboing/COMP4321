@@ -4,9 +4,21 @@ public final class PageDB {
 
 		public volatile boolean should_continue = false;
 
+		private void PrintPageRank() {
+			for (java.util.Map.Entry<Integer, Double> page_rank : PageRankScore
+					.entrySet()) {
+				System.out.printf("(%d,  %4.2f)", page_rank.getKey(),
+						page_rank.getValue());
+			}
+			System.out.printf("\n");
+		}
+
 		@Override
 		public void run() {
+			int round = 0;
 			while (should_continue) {
+				System.out.printf("page rank calc round %d\n", round++);
+				PrintPageRank();
 				try {
 					Init.DBSem.acquire();
 				} catch (InterruptedException e) {
@@ -32,15 +44,10 @@ public final class PageDB {
 					}
 				}
 				{
-					java.util.Iterator<java.util.Map.Entry<Integer, Double>> map_it = PageRankScore
-							.entrySet().iterator();
 					java.util.Iterator<Double> list_it = tmp_result_list
 							.iterator();
-					while (map_it.hasNext()) {
-						map_it.next().setValue(list_it.next());
-					}
-					if (list_it.hasNext()) {
-						System.exit(-3);
+					for (int i = 0; list_it.hasNext(); i++) {
+						PageRankScore.put(i, list_it.next());
 					}
 				}
 				Init.DBSem.release();
@@ -209,6 +216,7 @@ public final class PageDB {
 			}
 		}
 		PageLnkCnt.put(pageid, lnk_cnt);
+		PageRankScore.put(pageid, 0.5);
 	}
 
 	public static void AddDocWord(Integer pageID, Integer word_id,

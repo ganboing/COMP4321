@@ -6,6 +6,7 @@ public class Init {
 			1);
 
 	private static org.mapdb.DB SE_DB = null;
+	
 
 	/**
 	 * @param args
@@ -58,18 +59,40 @@ public class Init {
 			InvertedIdx.Init(SE_DB);
 		}
 		IndexingProc.Start();
-		for(int i=0; i < 30 ;i++)
 		{
-			Init.DBSem.acquire();
-			System.out.printf("page size at %d sec : %d\n", i, PageDB.GetExistPageSize());
-			Init.DBSem.release();
-			Thread.sleep(1000);
+			int i = 0;
+			while (true) {
+				i++;
+				Init.DBSem.acquire();
+				int PageDBExistSize = PageDB.GetExistPageSize();
+				Init.DBSem.release();
+				System.out.printf("page size at %d sec : %d\n", i,
+						PageDBExistSize);
+				if (PageDBExistSize > 10) {
+					System.out.println("trying to stop");
+					IndexingProc.Stop();
+					break;
+				}
+				Thread.sleep(1000);
+			}
 		}
-		System.out.println("trying to stop");
-		IndexingProc.Stop();
+		System.out.println("Indexing stopped");
 		PageDB.StartPageRankWorker();
-		Thread.sleep(30000);
+		System.out.println("Page Rank Worker Started");
+		//Thread.sleep(30000);
+		java.util.Scanner input_scan = new java.util.Scanner(System.in);
+		while(true)
+		{
+			System.out.println("query input:");
+			String query = input_scan.nextLine();
+			if(query.equals("exit"))
+			{
+				break;
+			}
+			Query.PresentQueryResult(Query.query(query));
+		}
 		PageDB.StopPageRankWorker();
+		System.out.println("Page Rank Worker Stopped");
 		SE_DB.commit();
 		SE_DB.close();
 		return;

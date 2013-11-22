@@ -9,6 +9,7 @@ public class PageProc {
 		}
 		if (imm_desc.interrupted) {
 			PageDB.AddOnePending(imm_desc.PageID);
+			Init.DBSem.release();
 			return;
 		}
 		PageDB.UpdateLink(imm_desc.PageID, imm_desc.links, 0.5);
@@ -26,5 +27,4 @@ public class PageProc {
 		PageDB.CreateMeta(imm_desc.PageID, imm_desc.title, imm_desc.last_mod);
 		Init.DBSem.release();
 	}
-
 }
