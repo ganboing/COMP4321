@@ -5,19 +5,23 @@ public final class PageDB {
 		public volatile boolean should_continue = false;
 
 		private void PrintPageRank() {
-			for (java.util.Map.Entry<Integer, Double> page_rank : PageRankScore
-					.entrySet()) {
-				System.out.printf("(%d,  %4.2f)", page_rank.getKey(),
-						page_rank.getValue());
+			if (Init.DEBUG) {
+				for (java.util.Map.Entry<Integer, Double> page_rank : PageRankScore
+						.entrySet()) {
+					System.out.printf("(%s,  %4.2f)\n",
+							GetPageUrl(page_rank.getKey()),
+							page_rank.getValue());
+				}
 			}
-			System.out.printf("\n");
 		}
 
 		@Override
 		public void run() {
 			int round = 0;
 			while (should_continue) {
-				System.out.printf("page rank calc round %d\n", round++);
+				if (Init.DEBUG) {
+					System.out.printf("page rank calc round %d\n", round++);
+				}
 				PrintPageRank();
 				try {
 					Init.DBSem.acquire();
@@ -40,7 +44,7 @@ public final class PageDB {
 							rank_score += (PageRankScore.get(rvlnk.b))
 									/ (PageLnkCnt.get(rvlnk.b));
 						}
-						tmp_result_list.add(rank_score / 2 + 0.5);
+						tmp_result_list.add(rank_score * 0.2 + 0.8);
 					}
 				}
 				{
@@ -216,7 +220,7 @@ public final class PageDB {
 			}
 		}
 		PageLnkCnt.put(pageid, lnk_cnt);
-		PageRankScore.put(pageid, 0.5);
+		PageRankScore.put(pageid, 1.0);
 	}
 
 	public static void AddDocWord(Integer pageID, Integer word_id,

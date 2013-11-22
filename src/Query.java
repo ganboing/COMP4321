@@ -1,10 +1,23 @@
 public class Query {
 
 	public static final class QueryResult {
+		public Double Score = null;
 		public String Title = null;
 		public Long LastMod = null;
+
+		public QueryResult(Double _score, String _title, Long _lastmod) {
+			Score = _score;
+			Title = _title;
+			LastMod = _lastmod;
+		}
+		
+		public void print()
+		{
+			java.util.Date lastmod = new java.util.Date(LastMod);
+			System.out.printf("%4.2f %s %s\n", Score, lastmod.toString(), Title);
+		}
 	}
-	
+
 	public static volatile boolean should_continue = false;
 
 	public static java.util.List<String> MostFreqTerm(Integer pageid,
@@ -29,21 +42,30 @@ public class Query {
 		}
 		return ret;
 	}
-	
-	public static java.util.List<QueryResult> PresentQueryResult(String query_term) 
-	{
-		java.util.List<Integer> result_id = query(query_term);
-		//java.util.List<E>
-		for(Integer pageid : result_id)
-		{
-			
-		}
-		return null;
-	}
-	
-	//public static 
 
-	public static java.util.List<Integer> query(String query_term) {
+	public static java.util.List<QueryResult> PresentQueryResult(
+			String query_term) {
+		java.util.List<QueryResult> ret = new java.util.LinkedList<Query.QueryResult>();
+		java.util.SortedSet<org.mapdb.Fun.Tuple2<Double, Integer>> result_rank = query(query_term);
+		// java.util.List<E>
+		for (org.mapdb.Fun.Tuple2<Double, Integer> page_rank_id : result_rank) {
+			ret.add(new QueryResult(page_rank_id.a, PageDB
+					.GetTitle(page_rank_id.b), PageDB
+					.GetLastMod(page_rank_id.b)));
+		}
+		return ret;
+	}
+
+	public static void PrintQueryResult(java.util.List<QueryResult> result)
+	{
+		for(QueryResult r : result)
+		{
+			r.print();
+		}
+	}
+
+	public static java.util.SortedSet<org.mapdb.Fun.Tuple2<Double, Integer>> query(
+			String query_term) {
 
 		if (!should_continue) {
 			return null;
@@ -92,7 +114,7 @@ public class Query {
 				keyword_weight_map.put(keyword, weight + 1);
 			}
 		}
-		java.util.List<Integer> ret = null;
+		java.util.SortedSet<org.mapdb.Fun.Tuple2<Double, Integer>> ret = null;
 		try {
 			Init.DBSem.acquire();
 		} catch (InterruptedException e) {

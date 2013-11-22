@@ -68,7 +68,7 @@ public class Init {
 				Init.DBSem.release();
 				System.out.printf("page size at %d sec : %d\n", i,
 						PageDBExistSize);
-				if (PageDBExistSize > 10) {
+				if (PageDBExistSize >= 317) {
 					System.out.println("trying to stop");
 					IndexingProc.Stop();
 					break;
@@ -89,8 +89,9 @@ public class Init {
 			{
 				break;
 			}
-			Query.PresentQueryResult(Query.query(query));
+			Query.PrintQueryResult(Query.PresentQueryResult(query));
 		}
+		input_scan.close();
 		PageDB.StopPageRankWorker();
 		System.out.println("Page Rank Worker Stopped");
 		SE_DB.commit();

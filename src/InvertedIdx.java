@@ -476,7 +476,7 @@ public class InvertedIdx {
 
 	// Core algo
 
-	public static java.util.List<Integer> Query(
+	public static java.util.SortedSet<org.mapdb.Fun.Tuple2<Double, Integer>> Query(
 			java.util.Map<String, Integer> keywords_weight,
 			java.util.Map<String, Integer> keyphases_weight) {
 		int i = 0;
@@ -557,10 +557,10 @@ public class InvertedIdx {
 			cos_score /= doc_vect_len;
 			rank.add(org.mapdb.Fun.t2(cos_score, vect_it.a));
 		}
-		java.util.List<Integer> ret = new java.util.LinkedList<Integer>();
+		/*java.util.List<Integer> ret = new java.util.LinkedList<Integer>();
 		for (org.mapdb.Fun.Tuple2<Double, Integer> score_doc : rank) {
 			ret.add(score_doc.b);
-		}
-		return ret;
+		}*/
+		return rank;
 	}
 }
