@@ -18,7 +18,7 @@ public class Query {
 		}
 	}
 
-	public static volatile boolean should_continue = false;
+	public static volatile boolean should_continue = true;
 
 	public static java.util.List<String> MostFreqTerm(Integer pageid,
 			int max_term) {
