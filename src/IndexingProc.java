@@ -16,7 +16,7 @@ public final class IndexingProc {
 			try {
 				java.util.concurrent.Future<IntermediatePageDescriptor> impage_future = IdxExecSrv
 						.take();
-				assert(impage_future != null);
+				assert (impage_future != null);
 				PageProc.ProcPage(impage_future.get());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -43,12 +43,12 @@ public final class IndexingProc {
 			while (should_continue) {
 				HttpWorkerTask.should_continue = true;
 				try {
-					Thread.sleep(50);
+					// Thread.sleep(50);
 				} catch (Exception e) {
 					e.printStackTrace();
 					System.exit(-2);
 				}
-				while ( page_indexing < POOL_SIZE) {
+				while (page_indexing < POOL_SIZE) {
 					Integer page_id = PageDB.PollOnePending();
 					if (page_id != null) {
 						page_indexing++;
@@ -59,6 +59,10 @@ public final class IndexingProc {
 					}
 				}
 				while (PickAndProcWithoutWait()) {
+					page_indexing--;
+				}
+				if (page_indexing > 0) {
+					PickAndProcWithWait();
 					page_indexing--;
 				}
 			}

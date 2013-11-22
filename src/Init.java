@@ -58,10 +58,18 @@ public class Init {
 			InvertedIdx.Init(SE_DB);
 		}
 		IndexingProc.Start();
-		Thread.sleep(30000);
+		for(int i=0; i < 30 ;i++)
+		{
+			Init.DBSem.acquire();
+			System.out.printf("page size at %d sec : %d\n", i, PageDB.GetExistPageSize());
+			Init.DBSem.release();
+			Thread.sleep(1000);
+		}
 		System.out.println("trying to stop");
 		IndexingProc.Stop();
-		
+		PageDB.StartPageRankWorker();
+		Thread.sleep(30000);
+		PageDB.StopPageRankWorker();
 		SE_DB.commit();
 		SE_DB.close();
 		return;
