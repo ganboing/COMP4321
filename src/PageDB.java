@@ -1,3 +1,5 @@
+import java.net.URISyntaxException;
+
 public final class PageDB {
 
 	public static final class PageRankWorkingThread implements Runnable {
@@ -29,6 +31,8 @@ public final class PageDB {
 	static private java.util.NavigableSet<org.mapdb.Fun.Tuple2<Integer, Integer>> PageRvLink;
 	static private java.util.concurrent.ConcurrentMap<String, Integer> PageIDByURL;
 	static private java.util.concurrent.ConcurrentMap<Integer, String> PageURLByID;
+	
+	static private String FIL_SITE = "";
 
 	/*
 	 * private static void DeleteLinks(Integer pageid) {
@@ -57,7 +61,7 @@ public final class PageDB {
 				.keepCounter(true).make();
 		PageURLByID = SE_DB.createTreeMap("PAGE_DB_PageURLByID")
 				.keepCounter(true).make();
-		AddPendingByUrl("http://www.ust.hk/eng/other/sitemap.htm");
+		AddPendingByUrl("http://www.cse.ust.hk/~ericzhao/COMP4321/TestPages/testpage.htm");
 	}
 
 	public static void Init(org.mapdb.DB SE_DB) {
@@ -76,7 +80,21 @@ public final class PageDB {
 	}
 
 	private static boolean URL_Filter(String url) {
-		return true;
+		try {
+			java.net.URI uri = new java.net.URI(url);
+			String domain = uri.getHost();
+			if(domain.length() >= FIL_SITE.length())
+			{
+				if(domain.substring(domain.length() - FIL_SITE.length()).equals(FIL_SITE))
+				{
+					//System.out.println(domain);
+					return true;
+				}
+			}
+			return false;
+		} catch (URISyntaxException e) {
+			return false;
+		}
 	}
 
 	public static Integer PollOnePending() {
@@ -111,6 +129,7 @@ public final class PageDB {
 		}
 		if (URL_Filter(url)) {
 			Integer assigned_id = Integer.valueOf(PageURLByID.size());
+			System.out.printf("Adding page %s id %d\n", url, assigned_id);
 			PagePending.add(assigned_id);
 			PageIDByURL.put(url, assigned_id);
 			PageURLByID.put(assigned_id, url);
@@ -130,6 +149,10 @@ public final class PageDB {
 		// DeleteLinks(pageID);
 		if (links_urls != null) {
 			for (String url : links_urls) {
+				if(Init.DEBUG)
+				{
+					System.out.printf("Adding Link to %s\n", url);
+				}
 				Integer newpageid = CreatePage(url);
 				if (newpageid != null) {
 					CreateLink(pageid, newpageid);
@@ -144,6 +167,12 @@ public final class PageDB {
 	}
 
 	public static void CreateMeta(Integer pageID, String title, Long last_mod) {
+		assert(pageID != null);
+		if(title == null)
+		{
+			title = new String("");
+		}
+		assert(last_mod != null);
 		PageTitle.put(pageID, title);
 		PageLastMod.put(pageID, last_mod);
 		// PagemaxTf.put(pageID, max_tf);

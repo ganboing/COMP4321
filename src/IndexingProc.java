@@ -16,6 +16,7 @@ public final class IndexingProc {
 			try {
 				java.util.concurrent.Future<IntermediatePageDescriptor> impage_future = IdxExecSrv
 						.take();
+				assert(impage_future != null);
 				PageProc.ProcPage(impage_future.get());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -65,6 +66,7 @@ public final class IndexingProc {
 			for (; page_indexing > 0; page_indexing--) {
 				PickAndProcWithWait();
 			}
+			IdxExecutor.shutdown();
 		}
 	}
 
@@ -75,7 +77,7 @@ public final class IndexingProc {
 		monitor_runnable = new HttpWorkerMonitor();
 		monitor_thread = new Thread(monitor_runnable);
 		monitor_runnable.should_continue = true;
-		monitor_thread.run();
+		monitor_thread.start();
 	}
 
 	public static void Stop() {

@@ -16,6 +16,7 @@ public class Init {
 		java.util.Map<String, String> arg_map = new java.util.HashMap<String, String>();
 		if ((args.length % 2) != 0) {
 			System.out.println("invalid args");
+			System.exit(-3);
 		}
 		for (int i = 0; i < args.length; i += 2) {
 			arg_map.put(args[i], args[i + 1]);
@@ -57,7 +58,10 @@ public class Init {
 			InvertedIdx.Init(SE_DB);
 		}
 		IndexingProc.Start();
-		Thread.sleep(10000);
+		Thread.sleep(30000);
+		System.out.println("trying to stop");
+		IndexingProc.Stop();
+		
 		SE_DB.commit();
 		SE_DB.close();
 		return;

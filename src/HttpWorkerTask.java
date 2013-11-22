@@ -1,12 +1,13 @@
 final class HttpWorkerTask implements
 		java.util.concurrent.Callable<IntermediatePageDescriptor> {
-	public static final class FetchException extends Exception  {
+	public static final class FetchException extends Exception {
 		private static final long serialVersionUID = 3151508604775978819L;
 		private Integer pageid = null;
-		public Integer GetPageId()
-		{
+
+		public Integer GetPageId() {
 			return pageid;
 		}
+
 		public FetchException(Integer _pageid) {
 			super();
 			pageid = _pageid;
@@ -29,14 +30,14 @@ final class HttpWorkerTask implements
 
 	@Override
 	public IntermediatePageDescriptor call() {
-		if(Init.DEBUG)
-		{
+		if (Init.DEBUG) {
 			System.out.printf("HttpWorker For %s is running\n", url_to_fetch);
 		}
 		try {
 			java.net.URL url = new java.net.URL(url_to_fetch);
 			if (!should_continue) {
-				return new IntermediatePageDescriptor(page_id, true);
+				return new IntermediatePageDescriptor(page_id, url_to_fetch,
+						true);
 			}
 			java.net.URLConnection url_connection = url.openConnection();
 			long last_mod = url_connection.getLastModified();
@@ -61,24 +62,32 @@ final class HttpWorkerTask implements
 				title = null;
 			}
 			if (!should_continue) {
-				return new IntermediatePageDescriptor(page_id, true);
+				return new IntermediatePageDescriptor(page_id, url_to_fetch,
+						true);
 			}
 			org.htmlparser.beans.StringBean sb = new org.htmlparser.beans.StringBean();
 			sb.setURL(url_to_fetch);
 			String words = sb.getStrings();
 			if (!should_continue) {
-				return new IntermediatePageDescriptor(page_id, true);
+				return new IntermediatePageDescriptor(page_id, url_to_fetch,
+						true);
 			}
 			org.htmlparser.beans.LinkBean lb = new org.htmlparser.beans.LinkBean();
 			lb.setURL(url_to_fetch);
 			java.net.URL[] URL_array = lb.getLinks();
-			if (!should_continue) {
-				return new IntermediatePageDescriptor(page_id, true);
+			if (Init.DEBUG) {
+				for (java.net.URL e : URL_array) {
+					System.out.println(e);
+				}
 			}
-			return new IntermediatePageDescriptor(page_id, last_mod, title,
-					words, URL_array);
+			if (!should_continue) {
+				return new IntermediatePageDescriptor(page_id, url_to_fetch,
+						true);
+			}
+			return new IntermediatePageDescriptor(page_id, url_to_fetch,
+					last_mod, title, words, URL_array);
 		} catch (Exception e) {
-			return new IntermediatePageDescriptor(page_id, false);
+			return new IntermediatePageDescriptor(page_id, url_to_fetch, false);
 		} finally {
 			if (Init.DEBUG) {
 				System.out.printf("HttpWorker For %s is finished\n",
