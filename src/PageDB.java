@@ -8,7 +8,7 @@ public final class PageDB {
 			if (Init.DEBUG) {
 				for (java.util.Map.Entry<Integer, Double> page_rank : PageRankScore
 						.entrySet()) {
-					System.out.printf("(%s,  %4.2f)\n",
+					System.out.printf("(%s,  %.2f)\n",
 							GetPageUrl(page_rank.getKey()),
 							page_rank.getValue());
 				}
