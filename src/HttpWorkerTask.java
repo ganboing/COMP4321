@@ -29,7 +29,10 @@ final class HttpWorkerTask implements
 
 	@Override
 	public IntermediatePageDescriptor call() {
-		System.out.printf("HttpWorker For %s is running\n", url_to_fetch);
+		if(Init.DEBUG)
+		{
+			System.out.printf("HttpWorker For %s is running\n", url_to_fetch);
+		}
 		try {
 			java.net.URL url = new java.net.URL(url_to_fetch);
 			if (!should_continue) {

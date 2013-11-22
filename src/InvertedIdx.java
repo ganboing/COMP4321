@@ -383,17 +383,25 @@ public class InvertedIdx {
 	// static org.mapdb.LongConcurrentLRUMap<Long> WordCnter = null;
 
 	public static void InitOriginal(org.mapdb.DB SE_DB) {
+		if (Init.DEBUG) {
+			System.out.println("Inv Idx Orig Init");
+		}
 		WordDfByID = SE_DB.createTreeMap("INV_IDX_WordDfByID").make();
 		WordDescByWordDocID = SE_DB
 				.createTreeMap("INV_IDX_WordDescByWordDocID")
 				.keySerializer(org.mapdb.BTreeKeySerializer.TUPLE2).make();
 		WordTfByWordDocID = SE_DB.createTreeMap("INV_IDX_WordTfByWordDocID")
 				.keySerializer(org.mapdb.BTreeKeySerializer.TUPLE2).make();
-		WordIDByStr = SE_DB.createTreeMap("INV_IDX_WordIDByStr").make();
-		WordStrByID = SE_DB.createTreeMap("INV_IDX_WordStrByID").make();
+		WordIDByStr = SE_DB.createTreeMap("INV_IDX_WordIDByStr")
+				.keepCounter(true).make();
+		WordStrByID = SE_DB.createTreeMap("INV_IDX_WordStrByID")
+				.keepCounter(true).make();
 	}
 
 	public static void Init(org.mapdb.DB SE_DB) {
+		if (Init.DEBUG) {
+			System.out.println("Inv Idx Init");
+		}
 		WordDfByID = SE_DB.getTreeMap("INV_IDX_WordDfByID");
 		WordDescByWordDocID = SE_DB.getTreeMap("INV_IDX_WordDescByWordDocID");
 		WordTfByWordDocID = SE_DB.getTreeMap("INV_IDX_WordTfByWordDocID");

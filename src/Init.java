@@ -1,6 +1,6 @@
 public class Init {
 
-	public static boolean DEBUG;
+	public static boolean DEBUG = false;
 
 	public static java.util.concurrent.Semaphore DBSem = new java.util.concurrent.Semaphore(
 			1);
@@ -22,19 +22,29 @@ public class Init {
 		}
 		System.out.println("search engine init with args:");
 		for (java.util.Map.Entry<String, String> e : arg_map.entrySet()) {
-			System.out.printf("%s : %s", e.getKey(), e.getValue());
+			System.out.printf("%s : %s\n", e.getKey(), e.getValue());
 		}
-		while(true);
-		/*String DbFileName = arg_map.get("-dbfile");
+		{
+			String If_Debug = null;
+			If_Debug = arg_map.get("-DEBUG");
+			if (If_Debug != null) {
+				Init.DEBUG = Boolean.parseBoolean(If_Debug);
+			}
+			if (Init.DEBUG) {
+				System.out.println("debugging");
+			}
+		}
+		String DbFileName = arg_map.get("-dbfile");
 		if (DbFileName != null) {
 			java.io.File dbfile = new java.io.File(DbFileName);
 			SE_DB = org.mapdb.DBMaker.newFileDB(dbfile).make();
 		} else {
 			System.err.println("Db file not found!");
+			System.exit(-3);
 		}
 		boolean is_init = false;
 		{
-			String init_status = arg_map.get("Init");
+			String init_status = arg_map.get("-Init");
 			if (init_status != null) {
 				is_init = Boolean.parseBoolean(init_status);
 			}
@@ -46,8 +56,11 @@ public class Init {
 			PageDB.Init(SE_DB);
 			InvertedIdx.Init(SE_DB);
 		}
-*/
-		//return;
+		IndexingProc.Start();
+		Thread.sleep(10000);
+		SE_DB.commit();
+		SE_DB.close();
+		return;
 	}
 
 }

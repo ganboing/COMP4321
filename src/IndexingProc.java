@@ -47,10 +47,15 @@ public final class IndexingProc {
 					e.printStackTrace();
 					System.exit(-2);
 				}
-				for (; page_indexing < POOL_SIZE; page_indexing++) {
+				while ( page_indexing < POOL_SIZE) {
 					Integer page_id = PageDB.PollOnePending();
-					IdxExecSrv.submit(new HttpWorkerTask(PageDB
-							.GetPageUrl(page_id), page_id));
+					if (page_id != null) {
+						page_indexing++;
+						IdxExecSrv.submit(new HttpWorkerTask(PageDB
+								.GetPageUrl(page_id), page_id));
+					} else {
+						break;
+					}
 				}
 				while (PickAndProcWithoutWait()) {
 					page_indexing--;

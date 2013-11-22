@@ -40,6 +40,9 @@ public final class PageDB {
 	 * PageLink.removeAll(children); }
 	 */
 	public static void InitOriginal(org.mapdb.DB SE_DB) {
+		if (Init.DEBUG) {
+			System.out.println("PageDB Orig Init");
+		}
 		PageContent = SE_DB.createTreeSet("PAGE_DB_PageContent")
 				.serializer(org.mapdb.BTreeKeySerializer.TUPLE3).make();
 		PageTitle = SE_DB.createTreeMap("PAGE_DB_PageTitle").make();
@@ -51,12 +54,16 @@ public final class PageDB {
 		PageRvLink = SE_DB.createTreeSet("PAGE_DB_PageRvLink")
 				.serializer(org.mapdb.BTreeKeySerializer.TUPLE2).make();
 		PageIDByURL = SE_DB.createTreeMap("PAGE_DB_PageIDByURL")
-				.counterEnable().make();
+				.keepCounter(true).make();
 		PageURLByID = SE_DB.createTreeMap("PAGE_DB_PageURLByID")
-				.counterEnable().make();
+				.keepCounter(true).make();
+		AddPendingByUrl("http://www.ust.hk/eng/other/sitemap.htm");
 	}
 
 	public static void Init(org.mapdb.DB SE_DB) {
+		if (Init.DEBUG) {
+			System.out.println("PageDB Init");
+		}
 		PageContent = SE_DB.getTreeSet("PAGE_DB_PageContent");
 		PageTitle = SE_DB.getTreeMap("PAGE_DB_PageTitle");
 		PageLastMod = SE_DB.getTreeMap("PAGE_DB_PageLastMod");
@@ -74,6 +81,13 @@ public final class PageDB {
 
 	public static Integer PollOnePending() {
 		return PagePending.pollFirst();
+	}
+
+	public static void AddPendingByUrl(String PageUrl) {
+		Integer pageid = CreatePage(PageUrl);
+		if (pageid != null) {
+			AddOnePending(pageid);
+		}
 	}
 
 	public static void AddOnePending(Integer pageid) {
