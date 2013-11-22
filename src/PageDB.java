@@ -21,12 +21,7 @@ public final class PageDB {
 	static private java.util.concurrent.ConcurrentMap<Integer, Long> PageLastMod;
 	static private java.util.concurrent.ConcurrentNavigableMap<Integer, Double> PageRankScore;
 	static private java.util.NavigableSet<Integer> PagePending;
-	/*
-	 * static private java.util.concurrent.ConcurrentMap<Integer, Integer>
-	 * PePageID2TTL; static private
-	 * java.util.NavigableSet<org.mapdb.Fun.Tuple2<Integer, Integer>>
-	 * PePageTTL2ID;
-	 */
+	
 	static private java.util.NavigableSet<org.mapdb.Fun.Tuple2<Integer, Integer>> PageLink;
 	static private java.util.NavigableSet<org.mapdb.Fun.Tuple2<Integer, Integer>> PageRvLink;
 	static private java.util.concurrent.ConcurrentMap<String, Integer> PageIDByURL;

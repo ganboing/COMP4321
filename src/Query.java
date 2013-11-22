@@ -2,6 +2,29 @@ public class Query {
 
 	public static volatile boolean should_continue = false;
 
+	public static java.util.List<String> MostFreqTerm(Integer pageid,
+			int max_term) {
+		try {
+			Init.DBSem.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-2);
+		}
+		java.util.Set<org.mapdb.Fun.Tuple3<Integer, Integer, Integer>> page_content = PageDB
+				.GetContent(pageid);
+		java.util.Iterator<org.mapdb.Fun.Tuple3<Integer, Integer, Integer>> it = page_content
+				.iterator();
+		java.util.List<String> ret = new java.util.LinkedList<String>();
+		for (int idx = 0; idx < max_term; idx++) {
+			if (it.hasNext()) {
+				ret.add(InvertedIdx.FindWordByID(it.next().c));
+			} else {
+				break;
+			}
+		}
+		return ret;
+	}
+
 	public static java.util.List<Integer> query(String query_term) {
 
 		if (!should_continue) {
