@@ -234,7 +234,7 @@ public final class PageDB {
 			title = new String("");
 		}
 		assert (last_mod != null);
-		System.out.printf("Creating page title:%s url:%s lastmod:%s\n", title, GetPageUrl(pageID), new java.util.Date(last_mod).toString());
+		System.out.printf("Creating page id:%d title:%s url:%s lastmod:%s\n",pageID, title, GetPageUrl(pageID), new java.util.Date(last_mod).toString());
 		PageTitle.put(pageID, title);
 		PageLastMod.put(pageID, last_mod);
 		// PagemaxTf.put(pageID, max_tf);
