@@ -68,8 +68,9 @@ public class Init {
 				Init.DBSem.release();
 				System.out.printf("page size at %d sec : %d\n", i,
 						PageDBExistSize);
-				if (PageDBExistSize >= 317) {
+				if (PageDBExistSize >= 300) {
 					System.out.println("trying to stop");
+					Thread.sleep(5000);
 					IndexingProc.Stop();
 					break;
 				}

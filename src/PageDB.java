@@ -234,6 +234,7 @@ public final class PageDB {
 			title = new String("");
 		}
 		assert (last_mod != null);
+		System.out.printf("Creating page title:%s url:%s lastmod:%s\n", title, GetPageUrl(pageID), new java.util.Date(last_mod).toString());
 		PageTitle.put(pageID, title);
 		PageLastMod.put(pageID, last_mod);
 		// PagemaxTf.put(pageID, max_tf);
@@ -279,6 +280,6 @@ public final class PageDB {
 		if (PageURLByID.size() != PageIDByURL.size()) {
 			System.exit(-2);
 		}
-		return PageURLByID.size() - PagePending.size();
+		return PageTitle.size();
 	}
 }

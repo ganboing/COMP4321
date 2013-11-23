@@ -444,10 +444,12 @@ public class InvertedIdx {
 
 	public static Integer InsertWordDoc(Integer page_id, String word,
 			KeyWordDescriptor word_desc) {
+		//System.out.printf("adding word %s in doc %s of freq %d\n", word, PageDB.GetPageUrl(page_id), word_desc.Cnt());
 		// assert (page_id != null);
 		Integer keyword_id = CreateWord(word);
 		WordDescByWordDocID.put(org.mapdb.Fun.t2(keyword_id, page_id),
 				word_desc);
+		WordTfByWordDocID.put(org.mapdb.Fun.t2(keyword_id, page_id), word_desc.GetCntObj());
 		Integer keyword_Df = WordDfByID.get(keyword_id);
 		if (keyword_Df == null) {
 			keyword_Df = Integer.valueOf(word_desc.Cnt());
@@ -458,13 +460,26 @@ public class InvertedIdx {
 		return keyword_id;
 	}
 
+	public static void PrintPostList(
+			Integer word_id,
+			java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Integer, Integer>, KeyWordDescriptor.KeyWordCnt> post_map) {
+		System.out.printf("post list of %s :", FindWordByID(word_id));
+		for (java.util.Map.Entry<org.mapdb.Fun.Tuple2<Integer, Integer>, KeyWordDescriptor.KeyWordCnt> ent : post_map
+				.entrySet()) {
+			System.out.printf("(%d, [%d, %d]), ", ent.getKey().b, ent.getValue().title_occur, ent.getValue().body_occur);
+		}
+		System.out.printf("\n");
+	}
+
 	public static java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Integer, Integer>, KeyWordDescriptor.KeyWordCnt> GetTermFreq(
 			Integer keyword_id) {
-		return WordTfByWordDocID
+		java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Integer, Integer>, KeyWordDescriptor.KeyWordCnt> ret = WordTfByWordDocID
 				.subMap(org.mapdb.Fun.t2(keyword_id, 0),
 						true,
 						org.mapdb.Fun.t2(keyword_id,
 								Integer.valueOf(Integer.MAX_VALUE)), false);
+		PrintPostList(keyword_id, ret);
+		return ret;
 	}
 
 	public static java.util.concurrent.ConcurrentNavigableMap<org.mapdb.Fun.Tuple2<Integer, Integer>, KeyWordDescriptor> GetTermDesc(
@@ -484,6 +499,12 @@ public class InvertedIdx {
 		java.util.List<Integer> weight_array = new java.util.ArrayList<Integer>();
 		java.util.List<Double> idf_array = new java.util.ArrayList<Double>();
 		TagItPool<Integer, KeyWordDescriptor.KeyWordCnt> WrdPhCntPool = new TagItPool<Integer, KeyWordDescriptor.KeyWordCnt>();
+		;
+		/*
+		 * try{ WrdPhCntPool = new TagItPool<Integer,
+		 * KeyWordDescriptor.KeyWordCnt>(); } catch(Throwable e) {
+		 * e.printStackTrace(); System.exit(-2); }
+		 */
 		for (java.util.Map.Entry<String, Integer> keyword_weight : keywords_weight
 				.entrySet()) {
 			String stemed = StopStem
@@ -531,7 +552,7 @@ public class InvertedIdx {
 					j++;
 				}
 			}
-			if (should_add_phase) {
+			if (should_add_phase && (phit != null)) {
 				WrdPhCntPool.AddIt(phit);
 				idf_array.add(Math.log(((double) GetDBSize()) / phase_df * j));
 				Integer weight = keyphase_weight.getValue();
@@ -557,10 +578,11 @@ public class InvertedIdx {
 			cos_score /= doc_vect_len;
 			rank.add(org.mapdb.Fun.t2(cos_score, vect_it.a));
 		}
-		/*java.util.List<Integer> ret = new java.util.LinkedList<Integer>();
-		for (org.mapdb.Fun.Tuple2<Double, Integer> score_doc : rank) {
-			ret.add(score_doc.b);
-		}*/
+		/*
+		 * java.util.List<Integer> ret = new java.util.LinkedList<Integer>();
+		 * for (org.mapdb.Fun.Tuple2<Double, Integer> score_doc : rank) {
+		 * ret.add(score_doc.b); }
+		 */
 		return rank;
 	}
 }

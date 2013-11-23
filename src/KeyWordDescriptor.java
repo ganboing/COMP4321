@@ -1,3 +1,5 @@
+import java.awt.image.TileObserver;
+
 final class WrdPhIt extends TagIt<Integer, Integer> {
 	java.util.Iterator<Integer> it = null;
 	Integer pos = null;
@@ -99,21 +101,14 @@ public final class KeyWordDescriptor implements java.io.Serializable {
 	}
 
 	public int GetTitleOccur() {
-		if (body_occur != null) {
-			return body_occur.size();
+		if (title_occur != null) {
+			return title_occur.size();
 		}
 		return 0;
 	}
 
 	public int Cnt() {
-		int ret = 0;
-		if (body_occur != null) {
-			ret += body_occur.size();
-		}
-		if (title_occur != null) {
-			ret += title_occur.size();
-		}
-		return ret;
+		return GetBodyOccur() + GetTitleOccur();
 	}
 
 	public KeyWordCnt GetCntObj() {

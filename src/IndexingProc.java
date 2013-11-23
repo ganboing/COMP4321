@@ -71,6 +71,14 @@ public final class IndexingProc {
 				PickAndProcWithWait();
 			}
 			IdxExecutor.shutdown();
+			try {
+				Init.DBSem.acquire();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				System.exit(-2);
+			}
+			System.out.printf("Indexed %d words and %d documents\n", InvertedIdx.GetDBSize(),PageDB.GetExistPageSize());
+			Init.DBSem.release();
 		}
 	}
 
