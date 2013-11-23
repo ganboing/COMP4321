@@ -66,17 +66,30 @@ public final class TagItPool<E extends Comparable<E>, K> {
 		return null;
 	}
 
-	/*
-	 * public org.mapdb.Fun.Tuple2<E, java.util.List<K>> GetNxtWholeVect() {
-	 * TagIt<E, K> firstit = itqueue.poll(); while (firstit != null) {
-	 * java.util.List<K> ret = null; E tag = firstit.GetTag(); for (int i = 0;
-	 * (firstit.GetSlot() == i) && (firstit.GetTag() == tag); i++) { if (ret ==
-	 * null) { ret = new java.util.LinkedList<K>(); } ret.add(firstit.GetVal());
-	 * PushItToQueue(firstit); if (i == (orig_size - 1)) { return
-	 * org.mapdb.Fun.t2(tag, ret); } firstit = itqueue.poll(); if (firstit ==
-	 * null) { return null; } } PushItToQueue(firstit); firstit =
-	 * itqueue.poll(); } return null; }
-	 */
+	public org.mapdb.Fun.Tuple2<E, java.util.List<K>> GetNxtWholeVect() {
+		TagIt<E, K> firstit = null;
+		while ((firstit = itqueue.poll()) != null) {
+			java.util.List<K> ret = null;
+			E tag = firstit.GetTag();
+			for (int i = 0; (firstit.GetSlot() == i)
+					&& (firstit.GetTag() == tag); i++) {
+				if (ret == null) {
+					ret = new java.util.LinkedList<K>();
+				}
+				ret.add(firstit.GetVal());
+				PushItAndUpdate(firstit);
+				if (i == (orig_size - 1)) {
+					return org.mapdb.Fun.t2(tag, ret);
+				}
+				firstit = itqueue.poll();
+				if (firstit == null) {
+					return null;
+				}
+			}
+			PushItAndUpdate(firstit);
+		}
+		return null;
+	}
 
 	public E GetNxtWholeTag() {
 		TagIt<E, K> firstit = null;

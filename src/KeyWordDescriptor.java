@@ -1,5 +1,3 @@
-import java.awt.image.TileObserver;
-
 final class WrdPhIt extends TagIt<Integer, Integer> {
 	java.util.Iterator<Integer> it = null;
 	Integer pos = null;
