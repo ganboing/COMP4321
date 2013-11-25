@@ -1,5 +1,6 @@
 package comp4321_proj;
-public final class QueryResult implements java.io.Serializable{
+
+public final class QueryResult implements java.io.Serializable {
 	/**
 	 * 
 	 */
@@ -10,35 +11,32 @@ public final class QueryResult implements java.io.Serializable{
 	public String LastMod = null;
 	public String Url = null;
 
-	public Double getScore()
-	{
-		return  Score;
+	public Double getScore() {
+		return Score;
 	}
-	
-	public String getTitle(){
+
+	public String getTitle() {
 		return Title;
 	}
-	
-	public String getLastMod()
-	{
+
+	public String getLastMod() {
 		return LastMod;
 	}
-	
-	public String getUrl()
-	{
+
+	public String getUrl() {
 		return Url;
 	}
-	
-	public Integer getPageId(){
+
+	public Integer getPageId() {
 		return PageId;
 	}
-	
-	public QueryResult(Integer _Pageid, Double _score, String _title, Long _lastmod,
-			String _url) {
+
+	public QueryResult(Integer _Pageid, Double _score, String _title,
+			Long _lastmod, String _url) {
 		PageId = _Pageid;
 		Score = _score;
 		Title = _title;
-		LastMod = _lastmod;
+		LastMod = new java.util.Date(_lastmod).toString();
 		Url = _url;
 	}
 
