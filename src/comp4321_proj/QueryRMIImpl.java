@@ -112,7 +112,7 @@ public class QueryRMIImpl extends java.rmi.server.UnicastRemoteObject implements
 			System.exit(-2);
 		}
 		for (org.mapdb.Fun.Tuple2<Double, Integer> page_rank_id : result_rank) {
-			ret.add(new QueryResultEle(page_rank_id.a, PageDB
+			ret.add(0,new QueryResultEle(page_rank_id.a, PageDB
 					.GetTitle(page_rank_id.b), PageDB
 					.GetLastMod(page_rank_id.b), PageDB
 					.GetPageUrl(page_rank_id.b)));

@@ -1,5 +1,9 @@
 package comp4321_proj;
-public final class QueryResultEle {
+public final class QueryResultEle implements java.io.Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1772646732843695246L;
 	public Double Score = null;
 	public String Title = null;
 	public Long LastMod = null;

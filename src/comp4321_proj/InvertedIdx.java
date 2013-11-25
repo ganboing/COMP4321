@@ -507,7 +507,7 @@ public class InvertedIdx {
 			java.util.Map<String, Integer> keyphases_weight) {
 		int i = 0;
 		double query_vect_len = 0;
-		java.util.List<Integer> weight_array = new java.util.ArrayList<Integer>();
+		java.util.List<Integer> query_weight_array = new java.util.ArrayList<Integer>();
 		java.util.List<Double> idf_array = new java.util.ArrayList<Double>();
 		TagItPool<Integer, KeyWordDescriptor.KeyWordCnt> WrdPhCntPool = new TagItPool<Integer, KeyWordDescriptor.KeyWordCnt>();
 		;
@@ -531,7 +531,7 @@ public class InvertedIdx {
 				idf_array.add(Math.log(((double) GetDBSize())
 						/ GetDfByID(keyword_id)));
 				Integer weight = keyword_weight.getValue();
-				weight_array.add(weight);
+				query_weight_array.add(weight);
 				query_vect_len += weight * weight;
 				i++;
 			}
@@ -563,7 +563,7 @@ public class InvertedIdx {
 				WrdPhCntPool.AddIt(phit);
 				idf_array.add(Math.log(((double) GetDBSize()) / phase_df * j));
 				Integer weight = keyphase_weight.getValue();
-				weight_array.add(weight);
+				query_weight_array.add(weight);
 				query_vect_len += weight * weight;
 				i++;
 			}
@@ -575,14 +575,13 @@ public class InvertedIdx {
 			double cos_score = 0;
 			double doc_vect_len = 0;
 			for (org.mapdb.Fun.Tuple2<Integer, KeyWordDescriptor.KeyWordCnt> word_f : vect_it.b) {
-				int word_real_f = word_f.b.body_occur + word_f.b.title_occur
-						* 255;
-				doc_vect_len += word_real_f;
-				cos_score += idf_array.get(word_f.a) * word_real_f
-						* weight_array.get(word_f.a);
+				double word_tf_idf =idf_array.get(word_f.a)* (word_f.b.body_occur + word_f.b.title_occur
+						* 255);
+				doc_vect_len += word_tf_idf * word_tf_idf;
+				cos_score += word_tf_idf * query_weight_array.get(word_f.a);
 			}
 			doc_vect_len = Math.sqrt(doc_vect_len);
-			cos_score /= doc_vect_len;
+			cos_score /= (doc_vect_len*query_vect_len);
 			rank.add(org.mapdb.Fun.t2(cos_score, vect_it.a));
 		}
 		/*
