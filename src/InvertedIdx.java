@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+
 /*final class SyncTermObj {
  public Object objptr;
  private int status;
@@ -381,6 +383,14 @@ public class InvertedIdx {
 	static java.util.concurrent.ConcurrentNavigableMap<Integer, String> WordStrByID;
 
 	// static org.mapdb.LongConcurrentLRUMap<Long> WordCnter = null;
+
+	public static java.util.List<String> GetAllWord() {
+		java.util.List<String> ret = new java.util.LinkedList<String>();
+		for (String e : WordIDByStr.keySet()) {
+			ret.add(e);
+		}
+		return ret;
+	}
 
 	public static void InitOriginal(org.mapdb.DB SE_DB) {
 		if (Init.DEBUG) {

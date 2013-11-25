@@ -1,29 +1,15 @@
-public class Query {
+public class QueryRMIImpl extends java.rmi.server.UnicastRemoteObject implements
+		QueryRMIInterface {
 
-	public static final class QueryResult {
-		public Double Score = null;
-		public String Title = null;
-		public Long LastMod = null;
-		public String Url = null;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6039432783779490301L;
 
-		public QueryResult(Double _score, String _title, Long _lastmod, String _url) {
-			Score = _score;
-			Title = _title;
-			LastMod = _lastmod;
-			Url = _url;
-		}
-		
-		public void print()
-		{
-			java.util.Date lastmod = new java.util.Date(LastMod);
-			System.out.printf("%4.2f %s %s\n", Score, lastmod.toString(), Title);
-		}
+	protected QueryRMIImpl() throws java.rmi.RemoteException {
 	}
 
-	public static volatile boolean should_continue = true;
-
-	public static java.util.List<String> MostFreqTerm(Integer pageid,
-			int max_term) {
+	public java.util.List<String> MostFreqTerm(Integer pageid, int max_term) {
 		try {
 			Init.DBSem.acquire();
 		} catch (InterruptedException e) {
@@ -45,33 +31,14 @@ public class Query {
 		return ret;
 	}
 
-	public static java.util.List<QueryResult> PresentQueryResult(
-			String query_term) {
-		java.util.List<QueryResult> ret = new java.util.LinkedList<Query.QueryResult>();
-		java.util.SortedSet<org.mapdb.Fun.Tuple2<Double, Integer>> result_rank = query(query_term);
-		// java.util.List<E>
-		for (org.mapdb.Fun.Tuple2<Double, Integer> page_rank_id : result_rank) {
-			ret.add(new QueryResult(page_rank_id.a, PageDB
-					.GetTitle(page_rank_id.b), PageDB
-					.GetLastMod(page_rank_id.b), PageDB.GetPageUrl(page_rank_id.b)));
-		}
-		return ret;
-	}
-
-	public static void PrintQueryResult(java.util.List<QueryResult> result)
-	{
-		for(QueryResult r : result)
-		{
+	public void PrintQueryResult(java.util.List<QueryResultEle> result) {
+		for (QueryResultEle r : result) {
 			r.print();
 		}
 	}
 
-	public static java.util.SortedSet<org.mapdb.Fun.Tuple2<Double, Integer>> query(
+	public java.util.SortedSet<org.mapdb.Fun.Tuple2<Double, Integer>> query(
 			String query_term) {
-
-		if (!should_continue) {
-			return null;
-		}
 
 		java.util.Map<String, Integer> keyword_weight_map = new java.util.HashMap<String, Integer>();
 		java.util.Map<String, Integer> keyphase_weight_map = new java.util.HashMap<String, Integer>();
@@ -123,11 +90,41 @@ public class Query {
 			e.printStackTrace();
 			System.exit(-2);
 		}
-		if (!should_continue) {
-			Init.DBSem.release();
-			return null;
-		}
 		ret = InvertedIdx.Query(keyword_weight_map, keyphase_weight_map);
+		Init.DBSem.release();
+		return ret;
+	}
+
+	@Override
+	public java.util.List<QueryResultEle> Query(String query_term)
+			throws java.rmi.RemoteException {
+		java.util.List<QueryResultEle> ret = new java.util.LinkedList<QueryResultEle>();
+		java.util.SortedSet<org.mapdb.Fun.Tuple2<Double, Integer>> result_rank = query(query_term);
+		try {
+			Init.DBSem.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-2);
+		}
+		for (org.mapdb.Fun.Tuple2<Double, Integer> page_rank_id : result_rank) {
+			ret.add(new QueryResultEle(page_rank_id.a, PageDB
+					.GetTitle(page_rank_id.b), PageDB
+					.GetLastMod(page_rank_id.b), PageDB
+					.GetPageUrl(page_rank_id.b)));
+		}
+		Init.DBSem.release();
+		return ret;
+	}
+
+	@Override
+	public java.util.List<String> GetAllWord() throws java.rmi.RemoteException {
+		try {
+			Init.DBSem.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-2);
+		}
+		java.util.List<String> ret = InvertedIdx.GetAllWord();
 		Init.DBSem.release();
 		return ret;
 	}
