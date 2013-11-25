@@ -137,6 +137,11 @@ public final class PageDB {
 		PageURLByID = SE_DB.getTreeMap("PAGE_DB_PageURLByID");
 		PageLnkCnt = SE_DB.getTreeMap("PAGE_DB_PageLnkCnt");
 	}
+	
+	public static Double GetPageRank(Integer pageid)
+	{
+		return PageRankScore.get(pageid);
+	}
 
 	private static boolean URL_Filter(String url) {
 		try {

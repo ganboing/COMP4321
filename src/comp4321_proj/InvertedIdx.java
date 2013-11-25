@@ -1,4 +1,5 @@
 package comp4321_proj;
+
 final class WordIt<K> extends TagIt<Integer, K> {
 
 	java.util.Map.Entry<org.mapdb.Fun.Tuple2<Integer, Integer>, K> nxt = null;
@@ -290,15 +291,19 @@ public class InvertedIdx {
 		while ((vect_it = WrdPhCntPool.GetNxtVect()) != null) {
 			double cos_score = 0;
 			double doc_vect_len = 0;
+			int title_cnt = 0;
 			for (org.mapdb.Fun.Tuple2<Integer, KeyWordDescriptor.KeyWordCnt> word_f : vect_it.b) {
-				double word_tf_idf =idf_array.get(word_f.a)* (word_f.b.body_occur + word_f.b.title_occur
-						* 255);
+				double word_tf_idf = idf_array.get(word_f.a)
+						* (word_f.b.body_occur + word_f.b.title_occur * 255);
+				title_cnt += word_f.b.title_occur;
 				doc_vect_len += word_tf_idf * word_tf_idf;
 				cos_score += word_tf_idf * query_weight_array.get(word_f.a);
 			}
 			doc_vect_len = Math.sqrt(doc_vect_len);
-			cos_score /= (doc_vect_len*query_vect_len);
-			rank.add(org.mapdb.Fun.t2(cos_score, vect_it.a));
+			cos_score /= (doc_vect_len * query_vect_len);
+			cos_score += title_cnt*255;
+			rank.add(org.mapdb.Fun.t2(
+					cos_score * PageDB.GetPageRank(vect_it.a), vect_it.a));
 		}
 		return rank;
 	}

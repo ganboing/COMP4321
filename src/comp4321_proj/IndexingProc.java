@@ -1,7 +1,7 @@
 package comp4321_proj;
 public final class IndexingProc {
 
-	private static final int POOL_SIZE = 16;
+	private static final int POOL_SIZE = 4;
 
 	private static final class HttpWorkerMonitor implements Runnable {
 
