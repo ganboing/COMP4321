@@ -41,7 +41,6 @@ public final class QueryResult implements java.io.Serializable {
 	}
 
 	public void print() {
-		java.util.Date lastmod = new java.util.Date(LastMod);
-		System.out.printf("%4.2f %s %s\n", Score, lastmod.toString(), Title);
+		System.out.printf("%4.2f %s %s\n", Score, LastMod, Title);
 	}
 }
