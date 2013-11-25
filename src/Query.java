@@ -4,11 +4,13 @@ public class Query {
 		public Double Score = null;
 		public String Title = null;
 		public Long LastMod = null;
+		public String Url = null;
 
-		public QueryResult(Double _score, String _title, Long _lastmod) {
+		public QueryResult(Double _score, String _title, Long _lastmod, String _url) {
 			Score = _score;
 			Title = _title;
 			LastMod = _lastmod;
+			Url = _url;
 		}
 		
 		public void print()
@@ -51,7 +53,7 @@ public class Query {
 		for (org.mapdb.Fun.Tuple2<Double, Integer> page_rank_id : result_rank) {
 			ret.add(new QueryResult(page_rank_id.a, PageDB
 					.GetTitle(page_rank_id.b), PageDB
-					.GetLastMod(page_rank_id.b)));
+					.GetLastMod(page_rank_id.b), PageDB.GetPageUrl(page_rank_id.b)));
 		}
 		return ret;
 	}
