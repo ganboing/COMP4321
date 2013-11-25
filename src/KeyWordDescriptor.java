@@ -19,6 +19,7 @@ final class WrdPhIt extends TagIt<Integer, Integer> {
 		if (it != null) {
 			if (it.hasNext()) {
 				pos = it.next();
+				return true;
 			}
 		}
 		return false;

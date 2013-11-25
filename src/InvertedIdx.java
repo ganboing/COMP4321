@@ -444,17 +444,19 @@ public class InvertedIdx {
 
 	public static Integer InsertWordDoc(Integer page_id, String word,
 			KeyWordDescriptor word_desc) {
-		//System.out.printf("adding word %s in doc %s of freq %d\n", word, PageDB.GetPageUrl(page_id), word_desc.Cnt());
+		// System.out.printf("adding word %s in doc %s of freq %d\n", word,
+		// PageDB.GetPageUrl(page_id), word_desc.Cnt());
 		// assert (page_id != null);
 		Integer keyword_id = CreateWord(word);
 		WordDescByWordDocID.put(org.mapdb.Fun.t2(keyword_id, page_id),
 				word_desc);
-		WordTfByWordDocID.put(org.mapdb.Fun.t2(keyword_id, page_id), word_desc.GetCntObj());
+		WordTfByWordDocID.put(org.mapdb.Fun.t2(keyword_id, page_id),
+				word_desc.GetCntObj());
 		Integer keyword_Df = WordDfByID.get(keyword_id);
 		if (keyword_Df == null) {
-			keyword_Df = Integer.valueOf(word_desc.Cnt());
+			keyword_Df = 1;
 		} else {
-			keyword_Df = keyword_Df + Integer.valueOf(word_desc.Cnt());
+			keyword_Df++;
 		}
 		WordDfByID.put(keyword_id, keyword_Df);
 		return keyword_id;
@@ -466,7 +468,8 @@ public class InvertedIdx {
 		System.out.printf("post list of %s :", FindWordByID(word_id));
 		for (java.util.Map.Entry<org.mapdb.Fun.Tuple2<Integer, Integer>, KeyWordDescriptor.KeyWordCnt> ent : post_map
 				.entrySet()) {
-			System.out.printf("(%d, [%d, %d]), ", ent.getKey().b, ent.getValue().title_occur, ent.getValue().body_occur);
+			System.out.printf("(%d, [%d, %d]), ", ent.getKey().b,
+					ent.getValue().title_occur, ent.getValue().body_occur);
 		}
 		System.out.printf("\n");
 	}
@@ -529,7 +532,6 @@ public class InvertedIdx {
 				.entrySet()) {
 			java.util.regex.Matcher matcher = StringProc
 					.GetWordMatcher(keyphase_weight.getKey());
-			boolean should_add_phase = true;
 			PhaseIt phit = null;
 			int j = 0;
 			int phase_df = 0;
@@ -539,10 +541,7 @@ public class InvertedIdx {
 				if (nxt_word != null) {
 					word_id = FindIDByWord(nxt_word);
 				}
-				if (word_id == null) {
-					should_add_phase = false;
-					break;
-				} else {
+				if (word_id != null) {
 					if (phit == null) {
 						phit = new PhaseIt(i);
 					}
@@ -552,7 +551,7 @@ public class InvertedIdx {
 					j++;
 				}
 			}
-			if (should_add_phase && (phit != null)) {
+			if (phit != null) {
 				WrdPhCntPool.AddIt(phit);
 				idf_array.add(Math.log(((double) GetDBSize()) / phase_df * j));
 				Integer weight = keyphase_weight.getValue();

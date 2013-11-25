@@ -57,57 +57,76 @@ public final class TagItPool<E extends Comparable<E>, K> {
 				ret.add(org.mapdb.Fun.t2(slot, val));
 				PushItAndUpdate(firstit);
 				firstit = itqueue.poll();
-			} while ((firstit != null) && (firstit.GetTag() == pageid));
-			if (firstit != null) {
-				PushItWithoutUpdate(firstit);
-			}
+				if (firstit == null) {
+					return org.mapdb.Fun.t2(pageid, ret);
+				}
+			} while ((firstit.GetTag() == pageid));
+			PushItWithoutUpdate(firstit);
 			return org.mapdb.Fun.t2(pageid, ret);
 		}
 		return null;
 	}
 
 	public org.mapdb.Fun.Tuple2<E, java.util.List<K>> GetNxtWholeVect() {
-		TagIt<E, K> firstit = null;
-		while ((firstit = itqueue.poll()) != null) {
-			java.util.List<K> ret = null;
-			E tag = firstit.GetTag();
-			for (int i = 0; (firstit.GetSlot() == i)
-					&& (firstit.GetTag() == tag); i++) {
-				if (ret == null) {
-					ret = new java.util.LinkedList<K>();
-				}
-				ret.add(firstit.GetVal());
+		java.util.List<K> ret = null;
+		TagIt<E, K> firstit = itqueue.poll();
+		if (firstit == null) {
+			return null;
+		}
+		while (true) {
+			while (firstit.GetSlot() != 0) {
 				PushItAndUpdate(firstit);
-				if (i == (orig_size - 1)) {
+				firstit = itqueue.poll();
+				if (firstit == null) {
+					return null;
+				}
+			}
+			E tag = firstit.GetTag();
+			int nxt_slot = 0;
+			ret = new java.util.LinkedList<K>();
+			do {
+				ret.add(firstit.GetVal());
+				nxt_slot++;
+				PushItAndUpdate(firstit);
+				if (nxt_slot == orig_size) {
 					return org.mapdb.Fun.t2(tag, ret);
 				}
 				firstit = itqueue.poll();
 				if (firstit == null) {
 					return null;
 				}
-			}
-			PushItAndUpdate(firstit);
+			} while ((firstit.GetTag() == tag)
+					&& (firstit.GetSlot() == nxt_slot));
 		}
-		return null;
 	}
 
 	public E GetNxtWholeTag() {
-		TagIt<E, K> firstit = null;
-		while ((firstit = itqueue.poll()) != null) {
-			E tag = firstit.GetTag();
-			for (int i = 0; (firstit.GetSlot() == i)
-					&& (firstit.GetTag() == tag); i++) {
+		TagIt<E, K> firstit = itqueue.poll();
+		if (firstit == null) {
+			return null;
+		}
+		while (true) {
+			while (firstit.GetSlot() != 0) {
 				PushItAndUpdate(firstit);
-				if (i == (orig_size - 1)) {
+				firstit = itqueue.poll();
+				if (firstit == null) {
+					return null;
+				}
+			}
+			E tag = firstit.GetTag();
+			int nxt_slot = 0;
+			do {
+				nxt_slot++;
+				PushItAndUpdate(firstit);
+				if (nxt_slot == orig_size) {
 					return tag;
 				}
 				firstit = itqueue.poll();
 				if (firstit == null) {
 					return null;
 				}
-			}
-			PushItAndUpdate(firstit);
+			} while ((firstit.GetTag() == tag)
+					&& (firstit.GetSlot() == nxt_slot));
 		}
-		return null;
 	}
 }
