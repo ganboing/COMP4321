@@ -1,5 +1,5 @@
 package comp4321_proj;
-public final class QueryResultEle implements java.io.Serializable{
+public final class QueryResult implements java.io.Serializable{
 	/**
 	 * 
 	 */
@@ -9,7 +9,7 @@ public final class QueryResultEle implements java.io.Serializable{
 	public Long LastMod = null;
 	public String Url = null;
 
-	public QueryResultEle(Double _score, String _title, Long _lastmod,
+	public QueryResult(Double _score, String _title, Long _lastmod,
 			String _url) {
 		Score = _score;
 		Title = _title;
