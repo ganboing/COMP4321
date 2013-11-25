@@ -510,12 +510,6 @@ public class InvertedIdx {
 		java.util.List<Integer> query_weight_array = new java.util.ArrayList<Integer>();
 		java.util.List<Double> idf_array = new java.util.ArrayList<Double>();
 		TagItPool<Integer, KeyWordDescriptor.KeyWordCnt> WrdPhCntPool = new TagItPool<Integer, KeyWordDescriptor.KeyWordCnt>();
-		;
-		/*
-		 * try{ WrdPhCntPool = new TagItPool<Integer,
-		 * KeyWordDescriptor.KeyWordCnt>(); } catch(Throwable e) {
-		 * e.printStackTrace(); System.exit(-2); }
-		 */
 		for (java.util.Map.Entry<String, Integer> keyword_weight : keywords_weight
 				.entrySet()) {
 			String stemed = StopStem
@@ -584,11 +578,6 @@ public class InvertedIdx {
 			cos_score /= (doc_vect_len*query_vect_len);
 			rank.add(org.mapdb.Fun.t2(cos_score, vect_it.a));
 		}
-		/*
-		 * java.util.List<Integer> ret = new java.util.LinkedList<Integer>();
-		 * for (org.mapdb.Fun.Tuple2<Double, Integer> score_doc : rank) {
-		 * ret.add(score_doc.b); }
-		 */
 		return rank;
 	}
 }
