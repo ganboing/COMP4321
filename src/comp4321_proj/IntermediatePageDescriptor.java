@@ -32,8 +32,8 @@ public class IntermediatePageDescriptor {
 			String word = matcher_body.group();
 			if ((word = StopStem.process_input_word(word)) != null) {
 				keyword_map.addBodyOccur(word, i);
+				i++;
 			}
-			i++;
 		}
 		java.util.regex.Matcher matcher_title = StringProc
 				.GetWordMatcher(_title);
@@ -42,8 +42,8 @@ public class IntermediatePageDescriptor {
 			String word = matcher_title.group();
 			if ((word = StopStem.process_input_word(word)) != null) {
 				keyword_map.addTitleOccur(word, i);
+				i++;
 			}
-			i++;
 		}
 		for (java.net.URL lnk : _links) {
 			if (links == null) {
