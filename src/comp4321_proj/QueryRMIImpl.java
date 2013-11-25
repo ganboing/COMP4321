@@ -1,4 +1,5 @@
 package comp4321_proj;
+
 public class QueryRMIImpl extends java.rmi.server.UnicastRemoteObject implements
 		QueryRMIInterface {
 
@@ -11,9 +12,8 @@ public class QueryRMIImpl extends java.rmi.server.UnicastRemoteObject implements
 	 */
 	private static final long serialVersionUID = 6039432783779490301L;
 
-	
-
-	public java.util.List<String> MostFreqTerm(Integer pageid, int max_term) throws java.rmi.RemoteException {
+	public java.util.List<String> MostFreqTerm(Integer pageid, int max_term)
+			throws java.rmi.RemoteException {
 		try {
 			Init.DBSem.acquire();
 		} catch (InterruptedException e) {
@@ -112,10 +112,11 @@ public class QueryRMIImpl extends java.rmi.server.UnicastRemoteObject implements
 			System.exit(-2);
 		}
 		for (org.mapdb.Fun.Tuple2<Double, Integer> page_rank_id : result_rank) {
-			ret.add(0,new QueryResult(page_rank_id.a, PageDB
-					.GetTitle(page_rank_id.b), PageDB
-					.GetLastMod(page_rank_id.b), PageDB
-					.GetPageUrl(page_rank_id.b)));
+			ret.add(0,
+					new QueryResult(page_rank_id.b, page_rank_id.a, PageDB
+							.GetTitle(page_rank_id.b), PageDB
+							.GetLastMod(page_rank_id.b), PageDB
+							.GetPageUrl(page_rank_id.b)));
 		}
 		Init.DBSem.release();
 		return ret;
