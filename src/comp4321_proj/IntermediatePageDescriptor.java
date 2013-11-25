@@ -1,3 +1,4 @@
+package comp4321_proj;
 public class IntermediatePageDescriptor {
 
 	public Integer PageID = null;

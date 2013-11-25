@@ -1,4 +1,4 @@
-package Porter;
+package comp4321_proj;
 /* author:   Fotis Lazarinis (actually I translated from C to Java)
    date:     June 1997
    address:  Psilovraxou 12, Agrinio, 30100

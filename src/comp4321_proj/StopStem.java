@@ -1,3 +1,4 @@
+package comp4321_proj;
 public final class StopStem
 {
 	static final String[] stop_words_arr ={

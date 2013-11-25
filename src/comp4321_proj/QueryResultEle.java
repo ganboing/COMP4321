@@ -1,3 +1,4 @@
+package comp4321_proj;
 public final class QueryResultEle {
 	public Double Score = null;
 	public String Title = null;

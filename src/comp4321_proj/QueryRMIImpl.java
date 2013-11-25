@@ -1,9 +1,8 @@
-import java.rmi.RemoteException;
-
+package comp4321_proj;
 public class QueryRMIImpl extends java.rmi.server.UnicastRemoteObject implements
 		QueryRMIInterface {
 
-	public QueryRMIImpl() throws RemoteException {
+	public QueryRMIImpl() throws java.rmi.RemoteException {
 		super();
 	}
 

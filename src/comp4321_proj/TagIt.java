@@ -1,3 +1,4 @@
+package comp4321_proj;
 public abstract class TagIt<E extends Comparable<E>, V> implements
 		Comparable<TagIt<E, V>> {
 	int slot;

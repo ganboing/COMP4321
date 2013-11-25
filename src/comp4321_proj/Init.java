@@ -1,3 +1,4 @@
+package comp4321_proj;
 public class Init {
 
 	public static boolean DEBUG = false;

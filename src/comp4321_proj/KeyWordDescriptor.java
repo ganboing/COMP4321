@@ -1,3 +1,4 @@
+package comp4321_proj;
 final class WrdPhIt extends TagIt<Integer, Integer> {
 	java.util.Iterator<Integer> it = null;
 	Integer pos = null;

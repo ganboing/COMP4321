@@ -1,3 +1,4 @@
+package comp4321_proj;
 
 public class StringProc {
 
@@ -8,7 +9,7 @@ public class StringProc {
 
 	public static String Stem(String raw_word)
 	{
-		return Porter.Porter.stripAffixes(raw_word);
+		return Porter.stripAffixes(raw_word);
 	}
 	
 	public static java.util.regex.Matcher GetWordMatcher(String term)

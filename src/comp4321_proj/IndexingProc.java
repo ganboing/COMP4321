@@ -1,3 +1,4 @@
+package comp4321_proj;
 public final class IndexingProc {
 
 	private static final int POOL_SIZE = 16;

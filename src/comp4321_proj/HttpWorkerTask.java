@@ -1,3 +1,4 @@
+package comp4321_proj;
 final class HttpWorkerTask implements
 		java.util.concurrent.Callable<IntermediatePageDescriptor> {
 	public static final class FetchException extends Exception {

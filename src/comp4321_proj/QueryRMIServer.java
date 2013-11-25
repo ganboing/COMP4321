@@ -1,3 +1,4 @@
+package comp4321_proj;
 public final class QueryRMIServer {
 
 	static QueryRMIInterface if_instane = null;

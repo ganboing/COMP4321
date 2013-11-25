@@ -1,3 +1,4 @@
+package comp4321_proj;
 public class PageProc {
 
 	public static void ProcPage(IntermediatePageDescriptor imm_desc) {

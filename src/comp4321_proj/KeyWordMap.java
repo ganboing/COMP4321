@@ -1,3 +1,4 @@
+package comp4321_proj;
 public final class KeyWordMap extends
 		java.util.HashMap<String, KeyWordDescriptor> {
 

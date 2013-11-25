@@ -1,3 +1,4 @@
+package comp4321_proj;
 public final class TagItPool<E extends Comparable<E>, K> {
 
 	java.util.PriorityQueue<TagIt<E, K>> itqueue = null;
