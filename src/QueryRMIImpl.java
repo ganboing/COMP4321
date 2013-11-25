@@ -1,15 +1,20 @@
+import java.rmi.RemoteException;
+
 public class QueryRMIImpl extends java.rmi.server.UnicastRemoteObject implements
 		QueryRMIInterface {
+
+	public QueryRMIImpl() throws RemoteException {
+		super();
+	}
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6039432783779490301L;
 
-	protected QueryRMIImpl() throws java.rmi.RemoteException {
-	}
+	
 
-	public java.util.List<String> MostFreqTerm(Integer pageid, int max_term) {
+	public java.util.List<String> MostFreqTerm(Integer pageid, int max_term) throws java.rmi.RemoteException {
 		try {
 			Init.DBSem.acquire();
 		} catch (InterruptedException e) {
@@ -98,6 +103,7 @@ public class QueryRMIImpl extends java.rmi.server.UnicastRemoteObject implements
 	@Override
 	public java.util.List<QueryResultEle> Query(String query_term)
 			throws java.rmi.RemoteException {
+		System.out.printf("searching for %s\n", query_term);
 		java.util.List<QueryResultEle> ret = new java.util.LinkedList<QueryResultEle>();
 		java.util.SortedSet<org.mapdb.Fun.Tuple2<Double, Integer>> result_rank = query(query_term);
 		try {

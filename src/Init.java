@@ -80,19 +80,28 @@ public class Init {
 		System.out.println("Indexing stopped");
 		PageDB.StartPageRankWorker();
 		System.out.println("Page Rank Worker Started");
+		int RMI_BindPort = 9958;
+		{
+			String RMI_BindPort_Str = arg_map.get("RMI_Bind_Port");
+			if(RMI_BindPort_Str != null)
+			{
+				RMI_BindPort = Integer.parseInt(RMI_BindPort_Str);
+			}
+		}
+		QueryRMIServer.Start(RMI_BindPort);
 		//Thread.sleep(30000);
 		java.util.Scanner input_scan = new java.util.Scanner(System.in);
 		while(true)
 		{
-			System.out.println("query input:");
+			System.out.println("command:");
 			String query = input_scan.nextLine();
 			if(query.equals("exit"))
 			{
 				break;
 			}
-			Query.PrintQueryResult(Query.PresentQueryResult(query));
 		}
 		input_scan.close();
+		QueryRMIServer.Stop();
 		PageDB.StopPageRankWorker();
 		System.out.println("Page Rank Worker Stopped");
 		SE_DB.commit();

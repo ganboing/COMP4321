@@ -1,5 +1,3 @@
-import java.util.LinkedList;
-
 /*final class SyncTermObj {
  public Object objptr;
  private int status;
