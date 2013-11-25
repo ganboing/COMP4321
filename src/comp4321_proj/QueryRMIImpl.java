@@ -35,8 +35,8 @@ public class QueryRMIImpl extends java.rmi.server.UnicastRemoteObject implements
 		return ret;
 	}
 
-	public void PrintQueryResult(java.util.List<QueryResultEle> result) {
-		for (QueryResultEle r : result) {
+	public void PrintQueryResult(java.util.List<QueryResult> result) {
+		for (QueryResult r : result) {
 			r.print();
 		}
 	}
@@ -100,10 +100,10 @@ public class QueryRMIImpl extends java.rmi.server.UnicastRemoteObject implements
 	}
 
 	@Override
-	public java.util.List<QueryResultEle> Query(String query_term)
+	public java.util.List<QueryResult> Query(String query_term)
 			throws java.rmi.RemoteException {
 		System.out.printf("searching for %s\n", query_term);
-		java.util.List<QueryResultEle> ret = new java.util.LinkedList<QueryResultEle>();
+		java.util.List<QueryResult> ret = new java.util.LinkedList<QueryResult>();
 		java.util.SortedSet<org.mapdb.Fun.Tuple2<Double, Integer>> result_rank = query(query_term);
 		try {
 			Init.DBSem.acquire();
@@ -112,7 +112,7 @@ public class QueryRMIImpl extends java.rmi.server.UnicastRemoteObject implements
 			System.exit(-2);
 		}
 		for (org.mapdb.Fun.Tuple2<Double, Integer> page_rank_id : result_rank) {
-			ret.add(0,new QueryResultEle(page_rank_id.a, PageDB
+			ret.add(0,new QueryResult(page_rank_id.a, PageDB
 					.GetTitle(page_rank_id.b), PageDB
 					.GetLastMod(page_rank_id.b), PageDB
 					.GetPageUrl(page_rank_id.b)));

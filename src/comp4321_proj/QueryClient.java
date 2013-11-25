@@ -2,7 +2,7 @@ package comp4321_proj;
 
 public class QueryClient {
 
-	public static java.util.List<QueryResultEle> Query(String query_term)
+	public static java.util.List<QueryResult> Query(String query_term)
 			throws Exception {
 		QueryRMIInterface query_srv = (QueryRMIInterface) java.rmi.Naming
 				.lookup("rmi://localhost:9958/QueryRMI");
@@ -15,8 +15,8 @@ public class QueryClient {
 				.lookup(rmi_server);
 		java.util.Scanner input_scan = new java.util.Scanner(System.in);
 		String query = input_scan.nextLine();
-		java.util.List<QueryResultEle> ret = query_srv.Query(query);
-		for (QueryResultEle e : ret) {
+		java.util.List<QueryResult> ret = query_srv.Query(query);
+		for (QueryResult e : ret) {
 			e.print();
 		}
 		input_scan.close();
