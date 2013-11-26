@@ -298,12 +298,15 @@ public class InvertedIdx {
 				double word_tf_idf = idf_array.get(word_f.a)
 						* (word_f.b.body_occur + word_f.b.title_occur * 255);
 				title_cnt += word_f.b.title_occur;
+				//System.out.printf("word_tf_idf = %f, ", word_tf_idf);
 				doc_vect_len += word_tf_idf * word_tf_idf;
+				//System.out.printf("doc_vect_len = %f, ", doc_vect_len);
 				cos_score += word_tf_idf * query_weight_array.get(word_f.a);
+				//System.out.printf("cos_score = %f\n", cos_score);
 			}
 			doc_vect_len = Math.sqrt(doc_vect_len);
 			cos_score /= (doc_vect_len * query_vect_len);
-			cos_score += title_cnt*255;
+			cos_score += title_cnt;
 			rank.add(org.mapdb.Fun.t2(
 					cos_score * PageDB.GetPageRank(vect_it.a), vect_it.a));
 		}
