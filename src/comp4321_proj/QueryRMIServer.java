@@ -8,7 +8,7 @@ public final class QueryRMIServer {
 		try {
 			if_instane = new QueryRMIImpl();
 			java.rmi.registry.LocateRegistry.createRegistry(port);
-			BindPath = "rmi://localhost:" + port + "/QueryRMI";
+			BindPath = "rmi://192.168.254.2:" + port + "/QueryRMI";
 			java.rmi.Naming.bind(BindPath, if_instane);
 		} catch (Exception e) {
 			e.printStackTrace();

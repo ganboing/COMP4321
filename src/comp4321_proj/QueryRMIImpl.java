@@ -32,6 +32,7 @@ public class QueryRMIImpl extends java.rmi.server.UnicastRemoteObject implements
 				break;
 			}
 		}
+		Init.DBSem.release();
 		return ret;
 	}
 

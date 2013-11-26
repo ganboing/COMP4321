@@ -229,7 +229,7 @@ public final class PageDB {
 
 	public static void AddDocWord(Integer pageID, Integer word_id,
 			Integer word_freq) {
-		PageContent.add(org.mapdb.Fun.t3(pageID, word_freq, word_id));
+		PageContent.add(org.mapdb.Fun.t3(pageID, 0-word_freq, word_id));
 	}
 
 	public static void CreateMeta(Integer pageID, String title, Long last_mod) {
@@ -254,9 +254,9 @@ public final class PageDB {
 
 	public static java.util.Set<org.mapdb.Fun.Tuple3<Integer, Integer, Integer>> GetContent(
 			Integer pageID) {
-		return PageContent.subSet(org.mapdb.Fun.t3(pageID, Integer.valueOf(0),
+		return PageContent.subSet(org.mapdb.Fun.t3(pageID, Integer.valueOf(Integer.MIN_VALUE),
 				Integer.valueOf(0)), true, org.mapdb.Fun.t3(pageID,
-				Integer.valueOf(Integer.MAX_VALUE),
+				Integer.valueOf(0),
 				Integer.valueOf(Integer.MAX_VALUE)), false);
 	}
 
