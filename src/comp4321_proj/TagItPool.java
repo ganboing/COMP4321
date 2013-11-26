@@ -1,4 +1,5 @@
 package comp4321_proj;
+
 public final class TagItPool<E extends Comparable<E>, K> {
 
 	java.util.PriorityQueue<TagIt<E, K>> itqueue = null;
@@ -61,7 +62,7 @@ public final class TagItPool<E extends Comparable<E>, K> {
 				if (firstit == null) {
 					return org.mapdb.Fun.t2(pageid, ret);
 				}
-			} while ((firstit.GetTag() == pageid));
+			} while ((firstit.GetTag().equals(pageid)));
 			PushItWithoutUpdate(firstit);
 			return org.mapdb.Fun.t2(pageid, ret);
 		}
@@ -96,7 +97,7 @@ public final class TagItPool<E extends Comparable<E>, K> {
 				if (firstit == null) {
 					return null;
 				}
-			} while ((firstit.GetTag() == tag)
+			} while ((firstit.GetTag().equals(tag))
 					&& (firstit.GetSlot() == nxt_slot));
 		}
 	}
@@ -126,7 +127,7 @@ public final class TagItPool<E extends Comparable<E>, K> {
 				if (firstit == null) {
 					return null;
 				}
-			} while ((firstit.GetTag() == tag)
+			} while ((firstit.GetTag().equals(tag))
 					&& (firstit.GetSlot() == nxt_slot));
 		}
 	}

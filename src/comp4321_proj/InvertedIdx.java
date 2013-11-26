@@ -212,7 +212,7 @@ public class InvertedIdx {
 						true,
 						org.mapdb.Fun.t2(keyword_id,
 								Integer.valueOf(Integer.MAX_VALUE)), false);
-		PrintPostList(keyword_id, ret);
+		//PrintPostList(keyword_id, ret);
 		return ret;
 	}
 
@@ -255,6 +255,7 @@ public class InvertedIdx {
 		}
 		for (java.util.Map.Entry<String, Integer> keyphase_weight : keyphases_weight
 				.entrySet()) {
+			System.out.printf("searching phase: %s\n", keyphase_weight.getKey());
 			java.util.regex.Matcher matcher = StringProc
 					.GetWordMatcher(keyphase_weight.getKey());
 			PhaseIt phit = null;
@@ -267,6 +268,7 @@ public class InvertedIdx {
 					word_id = FindIDByWord(nxt_word);
 				}
 				if (word_id != null) {
+					//GetTermFreq(word_id);
 					if (phit == null) {
 						phit = new PhaseIt(i);
 					}
